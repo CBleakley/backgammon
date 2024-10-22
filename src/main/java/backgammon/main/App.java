@@ -1,7 +1,15 @@
 package backgammon.main;
 
+import backgammon.gameLogic.Match;
+import backgammon.view.View;
+
 public class App {
     public static void main(String[] args) {
-        System.out.println("Welcome to Backgammon!");
+        View view = new View();
+
+        view.displayWelcomeMessage();
+
+        Match match = new Match(view);
+        match.start();
     }
 }
