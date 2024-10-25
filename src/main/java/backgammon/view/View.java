@@ -1,7 +1,10 @@
 package backgammon.view;
 
 import backgammon.board.Board;
+import backgammon.board.Point;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class View {
@@ -19,8 +22,15 @@ public class View {
         display(Messages.WELCOME_MESSAGE);
     }
 
-    public String retrievePlayerName() {
-        display(Messages.NAME_PROMPT);
+    public List<String> retrievePlayerNames() {
+        List<String> playerNames = new ArrayList<>();
+        playerNames.add(retrievePlayerName(String.format(Messages.NAME_PROMPT, 1)));
+        playerNames.add(retrievePlayerName(String.format(Messages.NAME_PROMPT, 2)));
+        return playerNames;
+    }
+
+    private String retrievePlayerName(String prompt) {
+        display(prompt);
 
         String playerName;
         while (true) {
@@ -53,6 +63,16 @@ public class View {
     }
 
     public void displayBoard(Board board) {
+        List<Point> points = board.getPoints();
 
+        StringBuilder displayBoard = new StringBuilder();
+        displayBoard.append(BoardFormatting.TOP);
+
+        displayBoard.append(BoardFormatting.BOTTOM);
+        display(displayBoard.toString());
+    }
+
+    private void moveCursorTo(int row, int col) {
+        System.out.print(String.format("\033[%d;%dH", row, col));
     }
 }

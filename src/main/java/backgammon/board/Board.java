@@ -22,6 +22,10 @@ public class Board {
         this.off = new Off();
     }
 
+    public List<Point> getPoints() {
+        return List.copyOf(points);
+    }
+
     private void initialiseStartingPosition() {
         // Black checkers
         this.points.get(0).addChecker(new Checker(Color.BLACK));  // 2 checkers on point 1
