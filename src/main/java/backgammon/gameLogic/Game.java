@@ -37,7 +37,7 @@ public class Game {
     }
 
     public void play() {
-        getInitialRolls();
+        makeInitialRolls();
         // TODO: make the player who plays first use the initial roll before loop.
 
         do {
@@ -46,7 +46,7 @@ public class Game {
         } while(!gameOver);
     }
 
-    public void getInitialRolls() {
+    public void makeInitialRolls() {
         Die die = new Die();
         int player1Roll;
         int player2Roll;
@@ -94,7 +94,7 @@ public class Game {
             roll();
         }
 
-        view.displayBoard(board);
+        view.displayBoard(board, nextRollToPlay);
         System.out.println(nextToPlay.getName() + " plays their move"); // TODO: Replace with actual move logic
     }
 

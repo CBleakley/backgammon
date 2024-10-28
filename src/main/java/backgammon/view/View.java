@@ -4,9 +4,7 @@ import backgammon.PlayerInput.PlayerInput;
 import backgammon.PlayerInput.QuitCommand;
 import backgammon.PlayerInput.RollCommand;
 import backgammon.board.Board;
-import backgammon.board.Checker;
 import backgammon.board.Color;
-import backgammon.board.Point;
 import backgammon.player.Player;
 
 import java.util.*;
@@ -128,95 +126,14 @@ public class View {
         display(String.format(Messages.PLAYER_ROLL_DOUBLES, roll.getFirst()));
     }
 
+    // Makes the rollToPlay argument in displayBoard() default to null if not specified
     public void displayBoard(Board board) {
-        List<Stack<Checker>> checkersOnPoints = getCheckersOnPoints(board.getPoints());
-
-        StringBuilder displayBoard = new StringBuilder();
-        displayBoard.append(BoardFormatting.TOP_BORDER);
-        displayBoard.append(BoardFormatting.TOP);
-
-        int maxOfTopPoints = getMaxSizeInRange(checkersOnPoints, 12, 24);
-        for (int j = 0; j < maxOfTopPoints; j++) {
-            displayBoard.append("|  ");
-            for(int i = 12; i < 24; i++) {
-                if(checkersOnPoints.get(i).size() > j) {
-                    Checker checker = checkersOnPoints.get(i).get(j);
-                    displayBoard.append(getCheckerDisplayString(checker));
-                } else {
-                    displayBoard.append(" ");
-                }
-
-                if (i == 12 || i == 19) {
-                    displayBoard.append("  ");
-                } else if(i == 17) {
-                    displayBoard.append(" |   |  ");
-                } else if(i == 23) {
-                    displayBoard.append(" |");
-                } else {
-                    displayBoard.append("   ");
-                }
-            }
-            displayBoard.append("\n");
-        }
-
-        displayBoard.append(BoardFormatting.EMPTY_BOARD_LINE);
-
-        int maxOfBottomPoints = getMaxSizeInRange(checkersOnPoints, 0, 12);
-        for(int j = maxOfBottomPoints; j > 0; j--) {
-            displayBoard.append("|  ");
-            for(int i = 11; i >= 0; i--) {
-                if(checkersOnPoints.get(i).size() >= j) {
-                    Checker checker = checkersOnPoints.get(i).get(j-1);
-                    displayBoard.append(getCheckerDisplayString(checker));
-                } else {
-                    displayBoard.append(" ");
-                }
-
-                if (i == 11 || i == 5) {
-                    displayBoard.append("  ");
-                } else if(i == 6) {
-                    displayBoard.append(" |   |  ");
-                } else if(i == 0) {
-                    displayBoard.append(" |");
-                } else {
-                    displayBoard.append("   ");
-                }
-            }
-            displayBoard.append("\n");
-        }
-
-
-        displayBoard.append(BoardFormatting.BOTTOM);
-        displayBoard.append(BoardFormatting.BOTTOM_BORDER);
-        display(displayBoard.toString());
+        displayBoard(board, null);
     }
 
-    private String getCheckerDisplayString(Checker checker) {
-        return switch(checker.getColor()) {
-            case BLUE -> BoardFormatting.BLUE_CHECKER;
-            case RED -> BoardFormatting.RED_CHECKER;
-        };
+    public void displayBoard(Board board, List<Integer> rollToPlay) {
+        String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay);
+        display(boardToDisplay);
     }
 
-    public static int getMaxSizeInRange(List<Stack<Checker>> listOfLists, int startIndex, int endIndex) {
-        int maxSize = 0;
-
-        // Loop through the specified index range
-        for (int i = startIndex; i <= endIndex && i < listOfLists.size(); i++) {
-            int currentSize = listOfLists.get(i).size();
-            if (currentSize > maxSize) {
-                maxSize = currentSize;
-            }
-        }
-
-        return maxSize;
-    }
-
-    private List<Stack<Checker>> getCheckersOnPoints(List<Point> points) {
-        List<Stack<Checker>> checkersOnPoints = new ArrayList<>();
-        for (Point point: points) {
-            checkersOnPoints.add(point.getCheckerStackCopy());
-        }
-         return checkersOnPoints;
-    }
 }

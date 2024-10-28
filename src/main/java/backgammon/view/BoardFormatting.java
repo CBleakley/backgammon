@@ -8,6 +8,8 @@ class BoardFormatting {
     static final String BOTTOM_BORDER = "|_______________________|___|_______________________|";
 
     static final String EMPTY_BOARD_LINE = "|                       |   |                       |\n";
+    static final String BOARD_WITH_2_DICE = "|          %s-%s          |   |                       |\n";
+    static final String BOARD_WITH_4_DICE = "|        %s-%s-%s-%s        |   |                       |\n";
 
     static final String CHECKER_SYMBOL = "O";
     static final String RED_CHECKER = ColorANSICodes.RED + CHECKER_SYMBOL + ColorANSICodes.RESET;
