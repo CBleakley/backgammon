@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    private View view;
-    private Board board;
-    private DicePair dice;
+    private final View view;
+    private final Board board;
+    private final DicePair dice;
 
-    private Player player1;
-    private Player player2;
+    private final Player player1;
+    private final Player player2;
 
     private Player nextToPlay;
     private List<Integer> nextRollToPlay;

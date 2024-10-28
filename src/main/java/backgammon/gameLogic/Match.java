@@ -5,13 +5,10 @@ import backgammon.board.Color;
 import backgammon.player.Player;
 import backgammon.view.View;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Match {
-    private View view;
-
-    private Board board;
+    private final View view;
 
     private int winThreshold;
 

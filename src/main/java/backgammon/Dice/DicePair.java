@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DicePair {
-    private Die die1;
-    private Die die2;
+    private final Die die1;
+    private final Die die2;
 
     public DicePair() {
         this.die1 = new Die();
