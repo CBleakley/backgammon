@@ -1,10 +1,12 @@
 package backgammon.gameLogic;
 
 import backgammon.board.Board;
+import backgammon.board.Color;
 import backgammon.player.Player;
 import backgammon.view.View;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Match {
     private View view;
@@ -15,21 +17,22 @@ public class Match {
 
     private Player player1;
     private Player player2;
+
     public Match (View view) {
         this.view = view;
         setupMatch();
     }
 
     private void setupMatch() {
-        List<String> playerNames = view.retrievePlayerNames();
-        player1 = new Player(playerNames.getFirst());
-        player2 = new Player(playerNames.getLast());
+        Map<Color, String> playerNames = view.retrievePlayerNames();
+        this.player1 = new Player(playerNames.get(Color.BLUE), Color.BLUE);
+        this.player2 = new Player(playerNames.get(Color.RED), Color.RED);
 
-        winThreshold = view.retrieveWinThreshold();
+        this.winThreshold = view.retrieveWinThreshold();
     }
 
     public void start() {
-        Game game = new Game(view);
+        Game game = new Game(view, player1, player2);
         game.play();
     }
 }

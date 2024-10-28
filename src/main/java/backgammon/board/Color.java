@@ -1,3 +1,3 @@
 package backgammon.board;
 
-public enum Color {WHITE, BLACK}
+public enum Color {BLUE, RED}

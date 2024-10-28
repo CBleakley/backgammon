@@ -8,8 +8,8 @@ public class Bar {
 
     public Bar() {
         this.checkerStacks = new EnumMap<>(Color.class);
-        this.checkerStacks.put(Color.BLACK, new Stack<>());
-        this.checkerStacks.put(Color.WHITE, new Stack<>());
+        this.checkerStacks.put(Color.RED, new Stack<>());
+        this.checkerStacks.put(Color.BLUE, new Stack<>());
     }
 
     public Stack<Checker> getBarOfColor(Color color) {
