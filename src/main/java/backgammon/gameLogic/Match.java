@@ -1,32 +1,35 @@
 package backgammon.gameLogic;
 
 import backgammon.board.Board;
+import backgammon.board.Color;
 import backgammon.player.Player;
 import backgammon.view.View;
 
-public class Match {
-    private View view;
+import java.util.Map;
 
-    private Board board;
+public class Match {
+    private final View view;
 
     private int winThreshold;
 
     private Player player1;
     private Player player2;
+
     public Match (View view) {
         this.view = view;
         setupMatch();
     }
 
     private void setupMatch() {
-        player1 = new Player(view.retrievePlayerName());
-        player2 = new Player(view.retrievePlayerName());
+        Map<Color, String> playerNames = view.retrievePlayerNames();
+        this.player1 = new Player(playerNames.get(Color.BLUE), Color.BLUE);
+        this.player2 = new Player(playerNames.get(Color.RED), Color.RED);
 
-        winThreshold = view.retrieveWinThreshold();
+        this.winThreshold = view.retrieveWinThreshold();
     }
 
     public void start() {
-        Game game = new Game(view);
+        Game game = new Game(view, player1, player2);
         game.play();
     }
 }
