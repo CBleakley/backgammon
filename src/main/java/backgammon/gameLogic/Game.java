@@ -6,6 +6,9 @@ import backgammon.PlayerInput.PlayerInput;
 import backgammon.PlayerInput.QuitCommand;
 import backgammon.PlayerInput.RollCommand;
 import backgammon.board.Board;
+import backgammon.board.Checker;
+import backgammon.board.Color;
+import backgammon.board.Point;
 import backgammon.player.Player;
 import backgammon.view.View;
 
@@ -42,6 +45,7 @@ public class Game {
 
         do {
             turn();
+            displayPipCounts();
             passToNextPlayer();
         } while(!gameOver);
     }
@@ -66,6 +70,11 @@ public class Game {
 
         view.displayXPlaysFirst(nextToPlay);
         setNextRollToPlay(player1Roll, player2Roll);
+
+
+        System.out.println("Initial Rolls: " + player1Roll + ", " + player2Roll);
+        System.out.println("Next Rolls to Play: " + nextRollToPlay);
+
     }
 
     private void setNextRollToPlay(int dice1, int dice2) {
@@ -95,7 +104,21 @@ public class Game {
         }
 
         view.displayBoard(board, nextRollToPlay);
-        System.out.println(nextToPlay.getName() + " plays their move"); // TODO: Replace with actual move logic
+        //System.out.println(nextToPlay.getName() + " plays their move"); // TODO: Replace with actual move logic
+        //System.out.println(board.getPoints());
+        //System.out.println(points.getCheckerStackCopy);
+    }
+
+    public int calculatePipCount(Color color) {
+        PipCounter pipCounter = new PipCounter(board);
+        return pipCounter.calculatePipCount(color);
+    }
+
+    public void displayPipCounts() {
+        int redPipCount = calculatePipCount(Color.RED);
+        int bluePipCount = calculatePipCount(Color.BLUE);
+
+        view.displayPipCount(redPipCount, bluePipCount);
     }
 
     public void passToNextPlayer() {

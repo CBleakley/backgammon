@@ -1,5 +1,7 @@
 package backgammon.board;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Stack;
 
 public class Point {
@@ -9,10 +11,13 @@ public class Point {
         this.checkerStack = new Stack<>();
     }
 
+    public List<Checker> getCheckers() {
+        return Collections.unmodifiableList(checkerStack);
+    }
+
     public Stack<Checker> getCheckerStackCopy() {
         Stack<Checker> copiedStack = new Stack<>();
         copiedStack.addAll(checkerStack);
-
         return copiedStack;
     }
 

@@ -18,7 +18,7 @@ public class BoardDisplayBuilder {
         List<Stack<Checker>> checkersOnPoints = getCheckersOnPoints(board.getPoints());
 
         StringBuilder displayBoard = new StringBuilder();
-        displayBoard.append(BoardFormatting.TOP_BORDER);
+        //displayBoard.append(BoardFormatting.TOP_BORDER);
         displayBoard.append(BoardFormatting.TOP);
 
         int maxOfTopPoints = getMaxSizeInRange(checkersOnPoints, 12, 24);

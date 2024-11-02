@@ -136,4 +136,9 @@ public class View {
         display(boardToDisplay);
     }
 
+    public void displayPipCount(int redPipCount, int bluePipCount) {
+        System.out.println("Red Pip Count: " + redPipCount);
+        System.out.println("Blue Pip Count: " + bluePipCount);
+    }
+
 }
