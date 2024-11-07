@@ -13,6 +13,24 @@ public class Off {
     }
 
     public Stack<Checker> getOffOfColor(Color color) {
-        return checkerStacks.get(color);
+        return this.checkerStacks.get(color);
+    }
+
+    public void addChecker(Checker checker) {
+        Color color = checker.getColor();
+        this.checkerStacks.get(color).push(checker);
+    }
+
+    public Off cloneOff() {
+        Off clonedOff = new Off();
+
+        for (Color color : this.checkerStacks.keySet()) {
+            Stack<Checker> originalStack = this.checkerStacks.get(color);
+            Stack<Checker> clonedStack = new Stack<>();
+            clonedStack.addAll(originalStack);
+            clonedOff.checkerStacks.put(color, clonedStack);
+        }
+
+        return clonedOff;
     }
 }

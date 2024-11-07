@@ -22,8 +22,33 @@ public class Board {
         this.off = new Off();
     }
 
+    public Board(List<Point> points, Bar bar, Off off) {
+        this.points = points;
+        this.bar = bar;
+        this.off = off;
+    }
+
     public List<Point> getPoints() {
         return List.copyOf(points);
+    }
+
+    public Bar getBar() {
+        return this.bar;
+    }
+
+    public Off getOff() {
+        return this.off;
+    }
+
+    public Board cloneBoard() {
+        List<Point> clonedPoints = new ArrayList<>();
+        for (Point point : this.points) {
+            clonedPoints.add(point.clonePoint());
+        }
+        Bar clonedBar = this.bar.cloneBar();
+        Off clonedOff = this.off.cloneOff();
+
+        return new Board(clonedPoints, clonedBar, clonedOff);
     }
 
     private void initialiseStartingPosition() {

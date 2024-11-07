@@ -5,6 +5,7 @@ import backgammon.PlayerInput.QuitCommand;
 import backgammon.PlayerInput.RollCommand;
 import backgammon.board.Board;
 import backgammon.board.Color;
+import backgammon.gameLogic.Move;
 import backgammon.player.Player;
 
 import java.util.*;
@@ -139,6 +140,36 @@ public class View {
     public void displayPipCount(int redPipCount, int bluePipCount) {
         System.out.println("Red Pip Count: " + redPipCount);
         System.out.println("Blue Pip Count: " + bluePipCount);
+    }
+
+    public void displayPossibleMoves(List<List<Move>> possibleMoveSequences) {
+        System.out.println("Possible moves:");
+        for (int i = 0; i < possibleMoveSequences.size(); i++) {
+            System.out.println("Option " + (i + 1) + ":");
+            for (Move move : possibleMoveSequences.get(i)) {
+                System.out.println("  " + move);
+            }
+        }
+    }
+
+    public void displayNoMovesAvailable(Player player) {
+        System.out.println(player.getName() + " has no available moves.");
+    }
+
+    public void displayRoll(Player player, List<Integer> diceRolls) {
+        System.out.println(player.getName() + " rolled: " + diceRolls);
+    }
+
+    public int promptMoveSelection(int numberOfOptions) {
+        System.out.print("Choose a move sequence (1 to " + numberOfOptions + "): ");
+        int choice = scanner.nextInt() - 1;
+
+        if (choice < 0 || choice >= numberOfOptions) {
+            System.out.println("Invalid choice. Please select a valid option.");
+            return -1; // Indicate invalid selection
+        }
+
+        return choice;
     }
 
 }

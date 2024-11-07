@@ -15,4 +15,24 @@ public class Bar {
     public Stack<Checker> getBarOfColor(Color color) {
         return this.checkerStacks.get(color);
     }
+
+    // Adds a checker to the bar based on its color
+    public void addChecker(Checker checker) {
+        Color color = checker.getColor();
+        this.checkerStacks.get(color).push(checker);
+    }
+
+    // Creates a deep copy of the Bar
+    public Bar cloneBar() {
+        Bar clonedBar = new Bar();
+        
+        for (Color color : this.checkerStacks.keySet()) {
+            Stack<Checker> originalStack = this.checkerStacks.get(color);
+            Stack<Checker> clonedStack = new Stack<>();
+            clonedStack.addAll(originalStack);
+            clonedBar.checkerStacks.put(color, clonedStack);
+        }
+
+        return clonedBar;
+    }
 }
