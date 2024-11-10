@@ -1,6 +1,5 @@
 package backgammon.gameLogic;
 
-import backgammon.board.Board;
 import backgammon.board.Color;
 import backgammon.player.Player;
 import backgammon.view.View;

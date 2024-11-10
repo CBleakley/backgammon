@@ -19,7 +19,7 @@ public class Game {
     private final Player player2;
 
     private Player nextToPlay;
-    private List<Integer> nextRollToPlay;
+    private final List<Integer> nextRollToPlay;
 
     private boolean gameQuit = false;
 
@@ -162,7 +162,7 @@ public class Game {
         return null;
     }
 
-    public int calculatePipCount(Color color) {
+    private int calculatePipCount(Color color) {
         return PipCounter.calculatePipCount(board, color);
     }
 
