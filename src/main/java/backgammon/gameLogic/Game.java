@@ -2,9 +2,7 @@ package backgammon.gameLogic;
 
 import backgammon.Dice.DicePair;
 import backgammon.Dice.Die;
-import backgammon.PlayerInput.PlayerInput;
-import backgammon.PlayerInput.QuitCommand;
-import backgammon.PlayerInput.RollCommand;
+import backgammon.PlayerInput.*;
 import backgammon.board.Board;
 import backgammon.board.Checker;
 import backgammon.board.Color;
@@ -41,11 +39,10 @@ public class Game {
 
     public void play() {
         makeInitialRolls();
-        view.displayBoard(board.cloneBoard(), nextRollToPlay);
+        view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, calculatePipCount(nextToPlay.getColor()));
 
         do {
             turn();
-            displayPipCounts();
             passToNextPlayer();
         } while(!gameOver);
     }
@@ -90,7 +87,7 @@ public class Game {
 
     public void turn() {
         // Check if we need to roll, which should only happen after the first turn
-        if (nextRollToPlay.isEmpty()) {
+        while (nextRollToPlay.isEmpty()) {
             PlayerInput playerInput = view.getPlayerInput(nextToPlay);
             if (playerInput instanceof QuitCommand) {
                 gameOver = true;
@@ -99,7 +96,16 @@ public class Game {
 
             if (playerInput instanceof RollCommand) {
                 roll();
-                view.displayBoard(board.cloneBoard(), nextRollToPlay);
+                int pipCount = calculatePipCount(nextToPlay.getColor());
+                view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, pipCount);
+            }
+
+            if (playerInput instanceof PipCommand) {
+                displayPipCounts();
+            }
+
+            if (playerInput instanceof HintCommand) {
+                displayHint();
             }
         }
 
@@ -142,14 +148,18 @@ public class Game {
         return PipCounter.calculatePipCount(board, color);
     }
 
-    public void displayPipCounts() {
+    private void displayPipCounts() {
         int redPipCount = calculatePipCount(Color.RED);
         int bluePipCount = calculatePipCount(Color.BLUE);
 
         view.displayPipCount(redPipCount, bluePipCount);
     }
 
-    public void passToNextPlayer() {
+    private void displayHint() {
+        view.displayHint();
+    }
+
+    private void passToNextPlayer() {
         nextToPlay = (nextToPlay == player1) ? player2 : player1;
     }
 

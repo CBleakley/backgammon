@@ -4,6 +4,7 @@ class Messages {
     static final String WELCOME_MESSAGE = "Welcome to Backgammon";
 
     static final String COLORED_PLAYER_NAME = "%s%s" + ColorANSICodes.RESET;
+    static final String BOARD_TITLE = COLORED_PLAYER_NAME + "  pip: %s";
 
     static final String INVALID_INPUT = "Invalid input: ";
     static final String PLEASE_TRY_AGAIN = "Please try again:";
@@ -20,9 +21,9 @@ class Messages {
     static final String ROLL_AGAIN = "Both players rolled the same, roll again...";
     static final String FIRST_TO_PLAY = COLORED_PLAYER_NAME + " rolled the higher number, and therfore plays first";
 
-    static final String PLAYER_INPUT_PROMPT = COLORED_PLAYER_NAME + " please enter a Command (\"quit\" or \"roll\"): ";
+    static final String PLAYER_INPUT_PROMPT = COLORED_PLAYER_NAME + " please enter a command (enter \"hint\" for a list of commands): ";
 
-    static final String INVALID_COMMAND = "Invalid Input: See game controls\n";
+    static final String INVALID_COMMAND = "Invalid Command: enter \"hint\" to see valid commands\n";
 
     static final String PLAYER_ROLL = "Roll: %s and %s";
     static final String PLAYER_ROLL_DOUBLES = "Roll: double %s's";
@@ -33,4 +34,12 @@ class Messages {
 
     static final String POSSIBLE_MOVES_TITLE = "Possible moves: ";
     static final String MOVE_OPTION_TITLE = "Option %s:";
+
+    static final String HINT =
+            """
+             The following commands are available:
+                "quit"
+                "roll"
+                "pip"
+                """;
 }

@@ -1,8 +1,6 @@
 package backgammon.view;
 
-import backgammon.PlayerInput.PlayerInput;
-import backgammon.PlayerInput.QuitCommand;
-import backgammon.PlayerInput.RollCommand;
+import backgammon.PlayerInput.*;
 import backgammon.board.Board;
 import backgammon.board.Color;
 import backgammon.gameLogic.Move;
@@ -115,6 +113,12 @@ public class View {
         RollCommand rollCommand = RollCommand.parse(cleanedInput);
         if (rollCommand != null) return rollCommand;
 
+        PipCommand pipCommand = PipCommand.parse(cleanedInput);
+        if (pipCommand != null) return pipCommand;
+
+        HintCommand hintCommand = HintCommand.parse(cleanedInput);
+        if (hintCommand != null) return hintCommand;
+
         display(Messages.INVALID_COMMAND);
         return null;
     }
@@ -129,17 +133,29 @@ public class View {
 
     // Makes the rollToPlay argument in displayBoard() default to null if not specified
     public void displayBoard(Board board) {
-        displayBoard(board, null);
+        displayBoard(board, null, null, null);
     }
 
-    public void displayBoard(Board board, List<Integer> rollToPlay) {
+    public void displayBoard(Board board, List<Integer> rollToPlay, Player playerToPlay, Integer pip) {
         String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay);
-        display("\n" + boardToDisplay + "\n");
+        if (playerToPlay != null) {
+            String colorCode = getColorANSI(playerToPlay.getColor());
+            String name = playerToPlay.getName();
+            display("\n" + String.format(Messages.BOARD_TITLE, colorCode, name, pip));
+            display(boardToDisplay);
+            return;
+        }
+
+        display("\n" + boardToDisplay);
     }
 
     public void displayPipCount(int redPipCount, int bluePipCount) {
-        System.out.println("Red Pip Count: " + redPipCount);
-        System.out.println("Blue Pip Count: " + bluePipCount);
+        display("Red Pip Count: " + redPipCount);
+        display("Blue Pip Count: " + bluePipCount + "\n");
+    }
+
+    public void displayHint() {
+        display(Messages.HINT);
     }
 
     public void displayPossibleMoves(List<List<Move>> possibleMoveSequences) {
