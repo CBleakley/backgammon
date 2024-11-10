@@ -23,6 +23,14 @@ public class View {
         display(Messages.WELCOME_MESSAGE);
     }
 
+    public void displayMatchQuitMessage() { display(Messages.MATCH_QUIT); }
+
+    public void displayMatchWinMessage(Player winner) {
+        String colorCode = getColorANSI(winner.getColor());
+        String name = winner.getName();
+        display(String.format(Messages.MATCH_WIN, colorCode, name));
+    }
+
     public Map<Color, String> retrievePlayerNames() {
         Map<Color, String> playerNames = new HashMap<>();
         playerNames.put(Color.BLUE, retrievePlayerName(String.format(Messages.NAME_PROMPT, 1)));

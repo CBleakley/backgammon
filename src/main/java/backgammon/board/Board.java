@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
+    static public int NUMBER_OF_CHECKERS_PER_PLAYER = 15;
+
     private final List<Point> points;
     private final Bar bar;
     private final Off off;

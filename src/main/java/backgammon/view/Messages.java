@@ -4,6 +4,10 @@ class Messages {
     static final String WELCOME_MESSAGE = "Welcome to Backgammon";
 
     static final String COLORED_PLAYER_NAME = "%s%s" + ColorANSICodes.RESET;
+
+    static final String MATCH_QUIT = "Match was quit";
+    static final String MATCH_WIN = COLORED_PLAYER_NAME + " won the match!";
+
     static final String BOARD_TITLE = COLORED_PLAYER_NAME + "  pip: %s";
 
     static final String INVALID_INPUT = "Invalid input: ";

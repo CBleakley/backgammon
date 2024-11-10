@@ -3,10 +3,7 @@ package backgammon.gameLogic;
 import backgammon.Dice.DicePair;
 import backgammon.Dice.Die;
 import backgammon.PlayerInput.*;
-import backgammon.board.Board;
-import backgammon.board.Checker;
-import backgammon.board.Color;
-import backgammon.board.Point;
+import backgammon.board.*;
 import backgammon.player.Player;
 import backgammon.view.View;
 
@@ -24,7 +21,7 @@ public class Game {
     private Player nextToPlay;
     private List<Integer> nextRollToPlay;
 
-    private boolean gameOver = false;
+    private boolean gameQuit = false;
 
     public Game(View view, Player player1, Player player2) {
         this.view = view;
@@ -37,17 +34,21 @@ public class Game {
         this.nextRollToPlay = new ArrayList<>();
     }
 
-    public void play() {
+    public GameWinner play() {
         makeInitialRolls();
         view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, calculatePipCount(nextToPlay.getColor()));
 
         do {
             turn();
+            GameWinner gameWinner = checkGameWon();
+            if (gameWinner != null) { return gameWinner; }
             passToNextPlayer();
-        } while(!gameOver);
+        } while(!gameQuit);
+
+        return null;
     }
 
-    public void makeInitialRolls() {
+    private void makeInitialRolls() {
         Die die = new Die();
         int player1Roll;
         int player2Roll;
@@ -85,12 +86,12 @@ public class Game {
         nextRollToPlay.add(dice1);
     }
 
-    public void turn() {
+    private void turn() {
         // Check if we need to roll, which should only happen after the first turn
         while (nextRollToPlay.isEmpty()) {
             PlayerInput playerInput = view.getPlayerInput(nextToPlay);
             if (playerInput instanceof QuitCommand) {
-                gameOver = true;
+                gameQuit = true;
                 return;
             }
 
@@ -142,6 +143,23 @@ public class Game {
         view.displayBoard(board.cloneBoard());
 
         nextRollToPlay.clear();
+    }
+
+    private GameWinner checkGameWon() {
+        int numberOfCheckersOffToWin = Board.NUMBER_OF_CHECKERS_PER_PLAYER;
+
+        Board boardClone = board.cloneBoard();
+        Off off = boardClone.getOff();
+        // TODO: Sprint 3: number of points won depends on double dice, gammon, backgammon
+        if (off.getOffOfColor(player1.getColor()).size() == numberOfCheckersOffToWin) {
+            return new GameWinner(player1, 1);
+        }
+
+        if (off.getOffOfColor((player2.getColor())).size() == numberOfCheckersOffToWin) {
+            return new GameWinner(player2, 1);
+        }
+
+        return null;
     }
 
     public int calculatePipCount(Color color) {
