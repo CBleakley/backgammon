@@ -1,8 +1,6 @@
 package backgammon.view;
 
-import backgammon.board.Board;
-import backgammon.board.Checker;
-import backgammon.board.Point;
+import backgammon.board.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +16,14 @@ public class BoardDisplayBuilder {
         List<Stack<Checker>> checkersOnPoints = getCheckersOnPoints(board.getPoints());
 
         StringBuilder displayBoard = new StringBuilder();
-        //displayBoard.append(BoardFormatting.TOP_BORDER);
-        displayBoard.append(BoardFormatting.TOP);
+
+        Stack<Checker> redOff = board.getOff().getOffOfColor(Color.RED);
+        String numberOfRedCheckersOff = String.format(BoardFormatting.RED_NUMBER, redOff.size());
+        displayBoard.append(String.format(BoardFormatting.TOP, numberOfRedCheckersOff));
 
         int maxOfTopPoints = getMaxSizeInRange(checkersOnPoints, 12, 24);
+        Bar bar = board.getBar();
+        Stack<Checker> blueBar = bar.getBarOfColor(Color.BLUE);
         for (int j = 0; j < maxOfTopPoints; j++) {
             displayBoard.append("|  ");
             for(int i = 12; i < 24; i++) {
@@ -32,10 +34,15 @@ public class BoardDisplayBuilder {
                     displayBoard.append(" ");
                 }
 
-                if (i == 12 || i == 19) {
+                if (i == 12 || i == 18) {
                     displayBoard.append("  ");
                 } else if(i == 17) {
-                    displayBoard.append(" |   |  ");
+                    if(j == 0) {
+                        String blueCheckersOnBar = (blueBar.isEmpty()) ? " " : String.format(BoardFormatting.BLUE_NUMBER, blueBar.size());
+                        displayBoard.append(" | ").append(blueCheckersOnBar).append(" |  ");
+                    } else {
+                        displayBoard.append(" |   |  ");
+                    }
                 } else if(i == 23) {
                     displayBoard.append(" |");
                 } else {
@@ -55,6 +62,7 @@ public class BoardDisplayBuilder {
         }
 
         int maxOfBottomPoints = getMaxSizeInRange(checkersOnPoints, 0, 12);
+        Stack<Checker> redBar = bar.getBarOfColor(Color.RED);
         for(int j = maxOfBottomPoints; j > 0; j--) {
             displayBoard.append("|  ");
             for(int i = 11; i >= 0; i--) {
@@ -68,7 +76,12 @@ public class BoardDisplayBuilder {
                 if (i == 11 || i == 5) {
                     displayBoard.append("  ");
                 } else if(i == 6) {
-                    displayBoard.append(" |   |  ");
+                    if(j == 1) {
+                        String redCheckersOnBar = (redBar.isEmpty()) ? " " : String.format(BoardFormatting.RED_NUMBER, redBar.size());
+                        displayBoard.append(" | ").append(redCheckersOnBar).append(" |  ");
+                    } else {
+                        displayBoard.append(" |   |  ");
+                    }
                 } else if(i == 0) {
                     displayBoard.append(" |");
                 } else {
@@ -78,9 +91,9 @@ public class BoardDisplayBuilder {
             displayBoard.append("\n");
         }
 
-
-        displayBoard.append(BoardFormatting.BOTTOM);
-        displayBoard.append(BoardFormatting.BOTTOM_BORDER);
+        Stack<Checker> blueOff = board.getOff().getOffOfColor(Color.BLUE);
+        String numberOfBlueCheckersOff = String.format(BoardFormatting.BLUE_NUMBER, blueOff.size());
+        displayBoard.append(String.format(BoardFormatting.BOTTOM, numberOfBlueCheckersOff));
         return displayBoard.toString();
     }
 

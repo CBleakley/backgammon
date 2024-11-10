@@ -41,8 +41,7 @@ public class Game {
 
     public void play() {
         makeInitialRolls();
-        // Initial rolls are used, this was modified in the turn() method
-        view.displayBoard(board, nextRollToPlay);
+        view.displayBoard(board.cloneBoard(), nextRollToPlay);
 
         do {
             turn();
@@ -100,62 +99,47 @@ public class Game {
 
             if (playerInput instanceof RollCommand) {
                 roll();
+                view.displayBoard(board.cloneBoard(), nextRollToPlay);
             }
         }
 
         // Generate possible moves with the current dice values in nextRollToPlay
-        MoveGenerator moveGenerator = new MoveGenerator();
-        List<List<Move>> possibleMoveSequences = moveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.getColor());
+        List<List<Move>> possibleMoveSequences = MoveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.getColor());
 
         if (possibleMoveSequences.isEmpty()) {
             view.displayNoMovesAvailable(nextToPlay);
-        } else {
-            view.displayPossibleMoves(possibleMoveSequences);
-
-            // Prompt player to select a move sequence
-            int selectedOption = view.promptMoveSelection(possibleMoveSequences.size());
-
-            if (selectedOption >= 0 && selectedOption < possibleMoveSequences.size()) {
-                List<Move> selectedMoves = possibleMoveSequences.get(selectedOption);
-
-                // Apply the selected moves to the actual game board
-                for (Move move : selectedMoves) {
-                    applyMove(board, move);
-                }
-
-                view.displayBoard(board, nextRollToPlay);
-            } else {
-                System.out.println("Invalid selection. No moves applied.");
-                // TODO: if invalid selection, go back to start of if statement and ask user again, until valid selection made
-            }
+            nextRollToPlay.clear();
+            return;
         }
+
+        if (possibleMoveSequences.size() == 1) {
+            List<Move> onlyPossibleMoves = possibleMoveSequences.getFirst();
+            view.displayOnlyOnePossibleMove(onlyPossibleMoves);
+            for (Move move : onlyPossibleMoves) {
+                MoveExecutor.executeMove(board, move);
+            }
+            view.displayBoard(board.cloneBoard());
+            nextRollToPlay.clear();
+            return;
+        }
+
+        view.displayPossibleMoves(possibleMoveSequences);
+
+        // Prompt player to select a move sequence
+        int selectedOption = view.promptMoveSelection(possibleMoveSequences.size());
+
+        List<Move> selectedMoves = possibleMoveSequences.get(selectedOption);
+        for (Move move : selectedMoves) {   // Apply the selected moves to the actual game board
+            MoveExecutor.executeMove(board, move);
+        }
+
+        view.displayBoard(board.cloneBoard());
 
         nextRollToPlay.clear();
     }
 
-
-    private void applyMove(Board board, Move move) {
-        // Same logic as in MoveGenerator.applyMove
-        int fromPointIndex = move.getFromPoint();
-        int toPointIndex = move.getToPoint();
-        Color playerColor = move.getPlayerColor();
-
-        List<Point> points = board.getPoints();
-        Point fromPoint = points.get(fromPointIndex);
-        Point toPoint = points.get(toPointIndex);
-
-        Checker movingChecker = fromPoint.removeTopChecker();
-
-        if (toPoint.hasCheckers() && toPoint.getTopCheckerColor() != playerColor && toPoint.getNumberOfCheckers() == 1) {
-            Checker opponentChecker = toPoint.removeTopChecker();
-            board.getBar().addChecker(opponentChecker);
-        }
-
-        toPoint.addChecker(movingChecker);
-    }
     public int calculatePipCount(Color color) {
-        PipCounter pipCounter = new PipCounter(board);
-        return pipCounter.calculatePipCount(color);
+        return PipCounter.calculatePipCount(board, color);
     }
 
     public void displayPipCounts() {

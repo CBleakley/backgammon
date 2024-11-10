@@ -1,15 +1,12 @@
 package backgammon.gameLogic;
 
-import backgammon.board.Board;
-import backgammon.board.Point;
-import backgammon.board.Color;
-import backgammon.board.Checker;
+import backgammon.board.*;
 
 import java.util.*;
 
 public class MoveGenerator {
 
-    public List<List<Move>> generateAllPossibleMoveSequences(Board board, List<Integer> diceRolls, Color playerColor) {
+    static public List<List<Move>> generateAllPossibleMoveSequences(Board board, List<Integer> diceRolls, Color playerColor) {
         Map<Integer, List<List<Move>>> movesByDiceUsed = new HashMap<>();
         Set<String> uniqueSequences = new HashSet<>();
         int maxDiceUsed = generateMovesRecursive(board, diceRolls, playerColor, new ArrayList<>(), movesByDiceUsed, 0, uniqueSequences);
@@ -18,9 +15,9 @@ public class MoveGenerator {
         return movesByDiceUsed.getOrDefault(maxDiceUsed, Collections.emptyList());
     }
 
-    private int generateMovesRecursive(Board board, List<Integer> diceRolls, Color playerColor,
-                                       List<Move> currentSequence, Map<Integer, List<List<Move>>> movesByDiceUsed,
-                                       int diceUsed, Set<String> uniqueSequences) {
+    private static int generateMovesRecursive(Board board, List<Integer> diceRolls, Color playerColor,
+                                              List<Move> currentSequence, Map<Integer, List<List<Move>>> movesByDiceUsed,
+                                              int diceUsed, Set<String> uniqueSequences) {
         if (diceRolls.isEmpty()) {
             if (!currentSequence.isEmpty()) {
                 List<Move> sortedSequence = new ArrayList<>(new HashSet<>(currentSequence));
@@ -56,7 +53,7 @@ public class MoveGenerator {
 
             for (Move move : possibleMoves) {
                 Board newBoard = board.cloneBoard();
-                applyMove(newBoard, move);
+                MoveExecutor.executeMove(newBoard, move);
 
                 List<Integer> remainingDice = new ArrayList<>(diceRolls);
                 diceCombo.forEach(remainingDice::remove);  // Remove used dice from remaining dice
@@ -89,7 +86,7 @@ public class MoveGenerator {
         return maxDiceUsed;
     }
 
-    private List<List<Integer>> generateDiceCombinations(List<Integer> diceRolls) {
+    private static List<List<Integer>> generateDiceCombinations(List<Integer> diceRolls) {
         List<List<Integer>> combinations = new ArrayList<>();
 
         // Generate all subsets of the dice rolls list
@@ -107,7 +104,7 @@ public class MoveGenerator {
         return combinations;
     }
 
-    private String generateSequenceKey(List<Move> moves) {
+    private static String generateSequenceKey(List<Move> moves) {
         List<String> moveStrings = new ArrayList<>();
         for (Move move : moves) {
             moveStrings.add(move.getFromPoint() + "-" + move.getToPoint());
@@ -116,9 +113,7 @@ public class MoveGenerator {
         return String.join(";", moveStrings);  // Combine into a single string key
     }
 
-
-
-    private List<Move> getPossibleMoves(Board board, int dieValue, Color playerColor) {
+    private static List<Move> getPossibleMoves(Board board, int dieValue, Color playerColor) {
         List<Move> possibleMoves = new ArrayList<>();
         List<Point> points = board.getPoints();
 
@@ -170,7 +165,10 @@ public class MoveGenerator {
     }
 
 
-    private boolean canBearOff(Board board, Color playerColor) {
+    private static boolean canBearOff(Board board, Color playerColor) {
+        Stack<Checker> barOfColor = board.getBar().getBarOfColor(playerColor);
+        if (!barOfColor.isEmpty()) { return false; }
+
         List<Point> points = board.getPoints();
         int homeStart = (playerColor == Color.RED) ? 18 : 0;  // Red’s home board is points 18-23, Blue’s is 0-5
         int homeEnd = homeStart + 5;
@@ -187,53 +185,16 @@ public class MoveGenerator {
     }
 
 
-    private boolean isLegalMove(Point destinationPoint, Color playerColor) {
+    private static boolean isLegalMove(Point destinationPoint, Color playerColor) {
         if (!destinationPoint.hasCheckers()) {
             return true;
-        } else {
-            Color destinationColor = destinationPoint.getTopCheckerColor();
-            if (destinationColor == playerColor) {
-                return true;
-            } else {
-                int numCheckers = destinationPoint.getNumberOfCheckers();
-                return numCheckers == 1;
-            }
         }
+
+        Color destinationColor = destinationPoint.getTopCheckerColor();
+        if (destinationColor == playerColor) {
+            return true;
+        }
+
+        return destinationPoint.getNumberOfCheckers() == 1;
     }
-
-    private void applyMove(Board board, Move move) {
-        int fromPointIndex = move.getFromPoint();
-        int toPointIndex = move.getToPoint();
-        Color playerColor = move.getPlayerColor();
-
-        List<Point> points = board.getPoints();
-        Point fromPoint = points.get(fromPointIndex);
-
-        // Check if fromPoint has a checker to move
-        // TODO: remove printing and move to view
-        if (!fromPoint.hasCheckers()) {
-            System.out.println("Error: No checkers to move from point " + fromPointIndex);
-            return;
-        }
-
-        Checker movingChecker = fromPoint.removeTopChecker();
-
-        // Bearing off logic
-        if (toPointIndex == -1 || toPointIndex == -2) {
-            // Add checker to the Off stack for the player's color
-            board.getOff().addChecker(movingChecker);
-        } else {
-            // Normal move within the board
-            Point toPoint = points.get(toPointIndex);
-
-            // Check if we are hitting an opponent's checker
-            if (toPoint.hasCheckers() && toPoint.getTopCheckerColor() != playerColor && toPoint.getNumberOfCheckers() == 1) {
-                Checker opponentChecker = toPoint.removeTopChecker();
-                board.getBar().addChecker(opponentChecker);
-            }
-
-            toPoint.addChecker(movingChecker);
-        }
-    }
-
 }

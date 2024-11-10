@@ -14,4 +14,6 @@ class BoardFormatting {
     static final String CHECKER_SYMBOL = "O";
     static final String RED_CHECKER = ColorANSICodes.RED + CHECKER_SYMBOL + ColorANSICodes.RESET;
     static final String BLUE_CHECKER = ColorANSICodes.BLUE + CHECKER_SYMBOL + ColorANSICodes.RESET;
+    static final String RED_NUMBER = ColorANSICodes.RED + "%s" + ColorANSICodes.RESET;
+    static final String BLUE_NUMBER = ColorANSICodes.BLUE + "%s" + ColorANSICodes.RESET;
 }

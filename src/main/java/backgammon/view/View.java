@@ -134,7 +134,7 @@ public class View {
 
     public void displayBoard(Board board, List<Integer> rollToPlay) {
         String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay);
-        display(boardToDisplay);
+        display("\n" + boardToDisplay + "\n");
     }
 
     public void displayPipCount(int redPipCount, int bluePipCount) {
@@ -143,17 +143,26 @@ public class View {
     }
 
     public void displayPossibleMoves(List<List<Move>> possibleMoveSequences) {
-        System.out.println("Possible moves:");
+        display(Messages.POSSIBLE_MOVES_TITLE);
         for (int i = 0; i < possibleMoveSequences.size(); i++) {
-            System.out.println("Option " + (i + 1) + ":");
+            display(String.format(Messages.MOVE_OPTION_TITLE, 1+i));
             for (Move move : possibleMoveSequences.get(i)) {
-                System.out.println("  " + move);
+                display("  " + move);
             }
         }
     }
 
     public void displayNoMovesAvailable(Player player) {
-        System.out.println(player.getName() + " has no available moves.");
+        String name = player.getName();
+        String colorCode = getColorANSI(player.getColor());
+        display(String.format(Messages.NO_POSSIBLE_MOVES, colorCode, name));
+    }
+
+    public void displayOnlyOnePossibleMove(List<Move> moves) {
+        display(Messages.ONLY_POSSIBLE_MOVE);
+        for (Move move : moves) {
+            display("  " + move);
+        }
     }
 
     public void displayRoll(Player player, List<Integer> diceRolls) {
@@ -161,15 +170,20 @@ public class View {
     }
 
     public int promptMoveSelection(int numberOfOptions) {
-        System.out.print("Choose a move sequence (1 to " + numberOfOptions + "): ");
-        int choice = scanner.nextInt() - 1;
+        display(String.format(Messages.CHOSE_MOVE_PROMPT, numberOfOptions));
 
-        if (choice < 0 || choice >= numberOfOptions) {
-            System.out.println("Invalid choice. Please select a valid option.");
-            return -1; // Indicate invalid selection
+        while (true) {
+            try {
+                int choice = Integer.parseInt(getInput()) - 1;
+                if (choice >= 0 && choice < numberOfOptions) {
+                    return choice;
+                }
+                display(String.format(Messages.OUT_OF_VALID_RANGE, numberOfOptions));
+            } catch (NumberFormatException e) {
+                display(Messages.INVALID_INTEGER);
+            }
+            display(Messages.PLEASE_TRY_AGAIN);
         }
-
-        return choice;
     }
 
 }

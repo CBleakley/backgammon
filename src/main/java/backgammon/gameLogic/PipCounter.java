@@ -8,14 +8,7 @@ import backgammon.board.Checker;
 import java.util.List;
 
 public class PipCounter {
-
-    private final Board board;
-
-    public PipCounter(Board board) {
-        this.board = board;
-    }
-
-    public int calculatePipCount(Color color) {
+    static public int calculatePipCount(Board board, Color color) {
         int pipCount = 0;
         List<Point> points = board.getPoints();
 

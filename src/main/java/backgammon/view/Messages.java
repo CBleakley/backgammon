@@ -14,6 +14,7 @@ class Messages {
     static final String POINTS_TO_PLAY_TO_PROMPT = "How many points would you like to play to in this match?";
     static final String INVALID_POSITIVE = INVALID_INPUT + "must be a positive";
     static final String INVALID_INTEGER = INVALID_INPUT + "must be a positive whole number";
+    static final String OUT_OF_VALID_RANGE = INVALID_INPUT + "must be between 1 and %s";
 
     static final String INITIAL_ROLL_MESSAGE = COLORED_PLAYER_NAME + " rolled a %s";
     static final String ROLL_AGAIN = "Both players rolled the same, roll again...";
@@ -25,4 +26,11 @@ class Messages {
 
     static final String PLAYER_ROLL = "Roll: %s and %s";
     static final String PLAYER_ROLL_DOUBLES = "Roll: double %s's";
+
+    static final String CHOSE_MOVE_PROMPT = "Chose a move sequence (1 to %s): ";
+    static final String ONLY_POSSIBLE_MOVE = "Only one possible move, forced to play: ";
+    static final String NO_POSSIBLE_MOVES = COLORED_PLAYER_NAME + " has no available moves";
+
+    static final String POSSIBLE_MOVES_TITLE = "Possible moves: ";
+    static final String MOVE_OPTION_TITLE = "Option %s:";
 }
