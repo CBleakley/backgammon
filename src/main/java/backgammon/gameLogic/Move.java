@@ -25,9 +25,35 @@ public class Move {
         return playerColor;
     }
 
-    // TODO: move this to view
     @Override
     public String toString() {
-        return "Move from " + (fromPoint + 1) + " to " + (toPoint + 1);
+        String from = (fromPoint == -3) ? "Bar" : String.valueOf(fromPoint + 1);
+        String to;
+        if (toPoint == -1 || toPoint == -2) {
+            to = "Off";
+        } else {
+            to = String.valueOf(toPoint + 1);
+        }
+        return "Move from " + from + " to " + to;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Move move = (Move) o;
+
+        if (fromPoint != move.fromPoint) return false;
+        if (toPoint != move.toPoint) return false;
+        return playerColor == move.playerColor;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fromPoint;
+        result = 31 * result + toPoint;
+        result = 31 * result + (playerColor != null ? playerColor.hashCode() : 0);
+        return result;
     }
 }

@@ -53,4 +53,6 @@ public class Point {
         clonedPoint.checkerStack.addAll(this.checkerStack);
         return clonedPoint;
     }
+
+
 }
