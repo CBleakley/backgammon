@@ -27,6 +27,9 @@ public class PipCounter {
             }
         }
 
+        int checkersOnBar = board.getBar().getBarOfColor(color).size();
+        pipCount += checkersOnBar * 25;
+
         return pipCount;
     }
 }

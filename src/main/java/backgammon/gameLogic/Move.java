@@ -27,14 +27,21 @@ public class Move {
 
     @Override
     public String toString() {
-        String from = (fromPoint == -3) ? "Bar" : String.valueOf(fromPoint + 1);
+        String from;
+        if (fromPoint == -3) {
+            from = "Bar";
+        } else {
+            from = (playerColor == Color.BLUE) ? String.valueOf(fromPoint + 1) : String.valueOf(24 - fromPoint);
+        }
+
         String to;
         if (toPoint == -1 || toPoint == -2) {
             to = "Off";
         } else {
-            to = String.valueOf(toPoint + 1);
+            to = (playerColor == Color.BLUE) ? String.valueOf(toPoint + 1) : String.valueOf(24 - toPoint);
         }
-        return "Move from " + from + " to " + to;
+
+        return "Move: " + from + "-" + to;
     }
 
     @Override

@@ -23,14 +23,8 @@ public class MoveGenerator {
         queue.add(initialState);
         visitedStates.add(new StateKey(initialState));
 
-        System.out.println("Starting BFS...");
-
         while (!queue.isEmpty()) {
             GameState currentState = queue.poll();
-
-            // Print the current state and move sequence being considered
-            System.out.println("\nConsidering moves for state with remaining dice: " + currentState.remainingDice);
-            System.out.println("Move sequence: " + currentState.moveSequence);
 
             // If no remaining dice or no possible moves, collect the move sequence
             if (currentState.remainingDice.isEmpty() || !hasPossibleMoves(currentState.board, currentState.remainingDice, playerColor)) {
@@ -39,11 +33,9 @@ public class MoveGenerator {
                     // Found sequences using more dice, clear previous results
                     maxMovesUsed = movesUsed;
                     result.clear();
-                    System.out.println("New maximum moves found, clearing previous results...");
                 }
                 if (movesUsed == maxMovesUsed) {
                     result.add(new ArrayList<>(currentState.moveSequence));
-                    System.out.println("Adding sequence to results: " + currentState.moveSequence);
                 }
                 continue;
             }
@@ -72,12 +64,8 @@ public class MoveGenerator {
 
                 if (!visitedStates.contains(newStateKey)) {
                     // Print the move sequence that is being added
-                    System.out.println("Adding new state with move sequence: " + newMoveSequence);
                     visitedStates.add(newStateKey);
                     queue.add(newState);
-                } else {
-                    // Print the sequence that is discarded as a duplicate
-                    System.out.println("Discarding duplicate state with move sequence: " + newMoveSequence);
                 }
             }
         }
@@ -147,7 +135,7 @@ public class MoveGenerator {
 
     private static List<MoveOption> generatePossibleMovesForDie(Board board, int dieValue, Color playerColor) {
         List<MoveOption> possibleMoves = new ArrayList<>();
-
+        // TODO: I think this is causing unnecessary forced moves
         // Check if the player can bear off
         if (isBearingOff(board, playerColor)) {
             List<Integer> bearOffPoints = getBearOffPoints(board, dieValue, playerColor);
@@ -274,6 +262,7 @@ public class MoveGenerator {
     }
 
     private static boolean isBearingOff(Board board, Color playerColor) {
+        // TODO: This doesn't check the bar!
         List<Point> points = board.getPoints();
         for (int i = 0; i < points.size(); i++) {
             Point point = points.get(i);

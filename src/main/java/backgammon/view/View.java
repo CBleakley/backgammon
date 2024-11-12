@@ -145,15 +145,15 @@ public class View {
     }
 
     public void displayBoard(Board board, List<Integer> rollToPlay, Player playerToPlay, Integer pip) {
-        String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay);
         if (playerToPlay != null) {
+            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay, playerToPlay.getColor());
             String colorCode = getColorANSI(playerToPlay.getColor());
             String name = playerToPlay.getName();
             display("\n" + String.format(Messages.BOARD_TITLE, colorCode, name, pip));
             display(boardToDisplay);
             return;
         }
-
+        String boardToDisplay = BoardDisplayBuilder.buildBoard(board);
         display("\n" + boardToDisplay);
     }
 

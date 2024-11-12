@@ -8,18 +8,22 @@ import java.util.Stack;
 
 public class BoardDisplayBuilder {
     // Makes the rollToPlay argument in buildBoard() default to null if not specified
-    static public void buildBoard(Board board) {
-        buildBoard(board, null);
-    }
+    static public String buildBoard(Board board) { return buildBoard(board, null, null); }
 
-    static public String buildBoard(Board board, List<Integer> rollToPlay) {
+    static public String buildBoard(Board board, List<Integer> rollToPlay, Color colorToPlay) {
         List<Stack<Checker>> checkersOnPoints = getCheckersOnPoints(board.getPoints());
 
         StringBuilder displayBoard = new StringBuilder();
 
         Stack<Checker> redOff = board.getOff().getOffOfColor(Color.RED);
         String numberOfRedCheckersOff = String.format(BoardFormatting.RED_NUMBER, redOff.size());
-        displayBoard.append(String.format(BoardFormatting.TOP, numberOfRedCheckersOff));
+        if (colorToPlay == Color.BLUE) {
+            displayBoard.append(String.format(BoardFormatting.PIP_13_24, numberOfRedCheckersOff));
+        } else if (colorToPlay == Color.RED) {
+            displayBoard.append(String.format(BoardFormatting.PIP_12_1, numberOfRedCheckersOff));
+        } else {
+            displayBoard.append(String.format(BoardFormatting.NO_PIP_BOARDER, numberOfRedCheckersOff));
+        }
 
         int maxOfTopPoints = getMaxSizeInRange(checkersOnPoints, 12, 24);
         Bar bar = board.getBar();
@@ -93,7 +97,16 @@ public class BoardDisplayBuilder {
 
         Stack<Checker> blueOff = board.getOff().getOffOfColor(Color.BLUE);
         String numberOfBlueCheckersOff = String.format(BoardFormatting.BLUE_NUMBER, blueOff.size());
-        displayBoard.append(String.format(BoardFormatting.BOTTOM, numberOfBlueCheckersOff));
+        if (colorToPlay == Color.BLUE) {
+            displayBoard.append(String.format(BoardFormatting.PIP_12_1, numberOfBlueCheckersOff));
+        } else if (colorToPlay == Color.RED) {
+            displayBoard.append(String.format(BoardFormatting.PIP_13_24, numberOfBlueCheckersOff));
+        } else {
+            displayBoard.append(String.format(BoardFormatting.NO_PIP_BOARDER, numberOfBlueCheckersOff));
+        }
+
+
+
         return displayBoard.toString();
     }
 

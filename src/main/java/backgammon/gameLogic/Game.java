@@ -119,6 +119,7 @@ public class Game {
             return;
         }
 
+        // TODO: this is falsely triggering when there are no possible moves
         if (possibleMoveSequences.size() == 1) {
             List<Move> onlyPossibleMoves = possibleMoveSequences.getFirst();
             view.displayOnlyOnePossibleMove(onlyPossibleMoves);
