@@ -254,15 +254,20 @@ public class MoveGenerator {
     private static boolean isPointOpenForPlayer(Point point, Color playerColor) {
         if (!point.hasCheckers()) {
             return true;
-        } else if (point.getTopCheckerColor() == playerColor) {
-            return true;
-        } else {
-            return point.getNumberOfCheckers() == 1;
         }
+
+        if (point.getTopCheckerColor() == playerColor) {
+            return true;
+        }
+
+        return point.getNumberOfCheckers() == 1;
     }
 
     private static boolean isBearingOff(Board board, Color playerColor) {
-        // TODO: This doesn't check the bar!
+        if (!board.getBar().getBarOfColor(playerColor).isEmpty()) {
+            return false;
+        }
+
         List<Point> points = board.getPoints();
         for (int i = 0; i < points.size(); i++) {
             Point point = points.get(i);
