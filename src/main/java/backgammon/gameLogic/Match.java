@@ -20,7 +20,7 @@ public class Match {
     private Player matchWinner;
     private boolean matchOver = false;
 
-    public Match (View view) {
+    public Match(View view) {
         this.view = view;
         setupMatch();
     }
@@ -42,9 +42,14 @@ public class Match {
             Game game = new Game(view, player1, player2);
             GameWinner gameWinner = game.play();
             updateMatchScore(gameWinner);
-        } while (!matchOver);
 
-        displayEndMatchMessage();
+            if (matchOver) {
+                displayEndMatchMessage();
+                if (view.promptStartNewMatch()) {
+                    resetMatch();
+                }
+            }
+        } while (!matchOver);
     }
 
     private void updateMatchScore(GameWinner gameWinner) {
@@ -70,5 +75,11 @@ public class Match {
             return;
         }
         view.displayMatchWinMessage(matchWinner);
+    }
+
+    private void resetMatch() {
+        setupMatch();
+        matchOver = false;
+        matchWinner = null;
     }
 }

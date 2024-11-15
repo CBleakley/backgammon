@@ -7,13 +7,17 @@ import java.util.List;
 import java.util.Stack;
 
 public class BoardDisplayBuilder {
-    // Makes the rollToPlay argument in buildBoard() default to null if not specified
-    static public String buildBoard(Board board) { return buildBoard(board, null, null); }
+    static public String buildBoard(Board board) {
+        return buildBoard(board, null, null, 0, 0, 0);
+    }
 
-    static public String buildBoard(Board board, List<Integer> rollToPlay, Color colorToPlay) {
+    static public String buildBoard(Board board, List<Integer> rollToPlay, Color colorToPlay, int matchScore1, int matchScore2, int matchLength) {
         List<Stack<Checker>> checkersOnPoints = getCheckersOnPoints(board.getPoints());
 
         StringBuilder displayBoard = new StringBuilder();
+
+        // Add match score and length at the top
+        displayBoard.append(String.format(BoardFormatting.MATCH_INFO, matchScore1, matchScore2, matchLength));
 
         Stack<Checker> redOff = board.getOff().getOffOfColor(Color.RED);
         String numberOfRedCheckersOff = String.format(BoardFormatting.RED_NUMBER, redOff.size());
@@ -30,8 +34,8 @@ public class BoardDisplayBuilder {
         Stack<Checker> blueBar = bar.getBarOfColor(Color.BLUE);
         for (int j = 0; j < maxOfTopPoints; j++) {
             displayBoard.append("|  ");
-            for(int i = 12; i < 24; i++) {
-                if(checkersOnPoints.get(i).size() > j) {
+            for (int i = 12; i < 24; i++) {
+                if (checkersOnPoints.get(i).size() > j) {
                     Checker checker = checkersOnPoints.get(i).get(j);
                     displayBoard.append(getCheckerDisplayString(checker));
                 } else {
@@ -40,14 +44,14 @@ public class BoardDisplayBuilder {
 
                 if (i == 12 || i == 18) {
                     displayBoard.append("  ");
-                } else if(i == 17) {
-                    if(j == 0) {
+                } else if (i == 17) {
+                    if (j == 0) {
                         String blueCheckersOnBar = (blueBar.isEmpty()) ? " " : String.format(BoardFormatting.BLUE_NUMBER, blueBar.size());
                         displayBoard.append(" | ").append(blueCheckersOnBar).append(" |  ");
                     } else {
                         displayBoard.append(" |   |  ");
                     }
-                } else if(i == 23) {
+                } else if (i == 23) {
                     displayBoard.append(" |");
                 } else {
                     displayBoard.append("   ");
@@ -59,19 +63,19 @@ public class BoardDisplayBuilder {
         if (rollToPlay == null) {
             displayBoard.append(BoardFormatting.EMPTY_BOARD_LINE);
         } else if (rollToPlay.size() == 2) {
-            displayBoard.append(String.format(BoardFormatting.BOARD_WITH_2_DICE, rollToPlay.getFirst(), rollToPlay.getLast()));
+            displayBoard.append(String.format(BoardFormatting.BOARD_WITH_2_DICE, rollToPlay.get(0), rollToPlay.get(1)));
         } else if (rollToPlay.size() == 4) {
             displayBoard.append(String.format(BoardFormatting.BOARD_WITH_4_DICE,
-                    rollToPlay.getFirst(), rollToPlay.getFirst(), rollToPlay.getFirst(), rollToPlay.getFirst()));
+                    rollToPlay.get(0), rollToPlay.get(1), rollToPlay.get(2), rollToPlay.get(3)));
         }
 
         int maxOfBottomPoints = getMaxSizeInRange(checkersOnPoints, 0, 12);
         Stack<Checker> redBar = bar.getBarOfColor(Color.RED);
-        for(int j = maxOfBottomPoints; j > 0; j--) {
+        for (int j = maxOfBottomPoints; j > 0; j--) {
             displayBoard.append("|  ");
-            for(int i = 11; i >= 0; i--) {
-                if(checkersOnPoints.get(i).size() >= j) {
-                    Checker checker = checkersOnPoints.get(i).get(j-1);
+            for (int i = 11; i >= 0; i--) {
+                if (checkersOnPoints.get(i).size() >= j) {
+                    Checker checker = checkersOnPoints.get(i).get(j - 1);
                     displayBoard.append(getCheckerDisplayString(checker));
                 } else {
                     displayBoard.append(" ");
@@ -79,14 +83,14 @@ public class BoardDisplayBuilder {
 
                 if (i == 11 || i == 5) {
                     displayBoard.append("  ");
-                } else if(i == 6) {
-                    if(j == 1) {
+                } else if (i == 6) {
+                    if (j == 1) {
                         String redCheckersOnBar = (redBar.isEmpty()) ? " " : String.format(BoardFormatting.RED_NUMBER, redBar.size());
                         displayBoard.append(" | ").append(redCheckersOnBar).append(" |  ");
                     } else {
                         displayBoard.append(" |   |  ");
                     }
-                } else if(i == 0) {
+                } else if (i == 0) {
                     displayBoard.append(" |");
                 } else {
                     displayBoard.append("   ");
@@ -105,13 +109,11 @@ public class BoardDisplayBuilder {
             displayBoard.append(String.format(BoardFormatting.NO_PIP_BOARDER, numberOfBlueCheckersOff));
         }
 
-
-
         return displayBoard.toString();
     }
 
     static private String getCheckerDisplayString(Checker checker) {
-        return switch(checker.getColor()) {
+        return switch (checker.getColor()) {
             case BLUE -> BoardFormatting.BLUE_CHECKER;
             case RED -> BoardFormatting.RED_CHECKER;
         };
@@ -120,7 +122,6 @@ public class BoardDisplayBuilder {
     static private int getMaxSizeInRange(List<Stack<Checker>> listOfLists, int startIndex, int endIndex) {
         int maxSize = 0;
 
-        // Loop through the specified index range
         for (int i = startIndex; i <= endIndex && i < listOfLists.size(); i++) {
             int currentSize = listOfLists.get(i).size();
             if (currentSize > maxSize) {
@@ -133,7 +134,7 @@ public class BoardDisplayBuilder {
 
     static private List<Stack<Checker>> getCheckersOnPoints(List<Point> points) {
         List<Stack<Checker>> checkersOnPoints = new ArrayList<>();
-        for (Point point: points) {
+        for (Point point : points) {
             checkersOnPoints.add(point.getCheckerStackCopy());
         }
         return checkersOnPoints;

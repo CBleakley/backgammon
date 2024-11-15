@@ -146,7 +146,7 @@ public class View {
 
     public void displayBoard(Board board, List<Integer> rollToPlay, Player playerToPlay, Integer pip) {
         if (playerToPlay != null) {
-            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay, playerToPlay.getColor());
+            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay, playerToPlay.getColor(), 0, 0, 0);
             String colorCode = getColorANSI(playerToPlay.getColor());
             String name = playerToPlay.getName();
             display("\n" + String.format(Messages.BOARD_TITLE, colorCode, name, pip));
@@ -209,5 +209,17 @@ public class View {
             display(Messages.PLEASE_TRY_AGAIN);
         }
     }
-
+    public boolean promptStartNewMatch() {
+        display("Would you like to start a new match? (yes/no)");
+        while (true) {
+            String input = getInput().trim().toLowerCase();
+            if (input.equals("yes")) {
+                return true;
+            } else if (input.equals("no")) {
+                return false;
+            } else {
+                display("Invalid input. Please type 'yes' or 'no'.");
+            }
+        }
+    }
 }
