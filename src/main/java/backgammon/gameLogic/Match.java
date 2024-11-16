@@ -15,7 +15,7 @@ public class Match {
     private Player player1;
     private Player player2;
 
-    private HashMap<Player, Integer> matchScore;
+    private Map<Player, Integer> matchScore;
 
     private Player matchWinner;
     private boolean matchOver = false;
@@ -39,7 +39,7 @@ public class Match {
 
     public void start() {
         do {
-            Game game = new Game(view, player1, player2);
+            Game game = new Game(view, player1, player2, matchScore, winThreshold);
             GameWinner gameWinner = game.play();
             updateMatchScore(gameWinner);
 
@@ -47,6 +47,8 @@ public class Match {
                 displayEndMatchMessage();
                 if (view.promptStartNewMatch()) {
                     resetMatch();
+                } else {
+                    break;
                 }
             }
         } while (!matchOver);

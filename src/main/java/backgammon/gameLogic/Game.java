@@ -9,6 +9,7 @@ import backgammon.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Game {
     private final View view;
@@ -23,7 +24,11 @@ public class Game {
 
     private boolean gameQuit = false;
 
-    public Game(View view, Player player1, Player player2) {
+    // Added fields for match score and match length
+    private final Map<Player, Integer> matchScore;
+    private final int matchLength;
+
+    public Game(View view, Player player1, Player player2, Map<Player, Integer> matchScore, int matchLength) {
         this.view = view;
         this.board = new Board();
         this.dice = new DicePair();
@@ -31,12 +36,16 @@ public class Game {
         this.player1 = player1;
         this.player2 = player2;
 
+        this.matchScore = matchScore;
+        this.matchLength = matchLength;
+
         this.nextRollToPlay = new ArrayList<>();
     }
 
     public GameWinner play() {
         makeInitialRolls();
-        view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, calculatePipCount(nextToPlay.getColor()));
+        int pipCount = calculatePipCount(nextToPlay.getColor());
+        view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, pipCount, matchScore.get(player1), matchScore.get(player2), matchLength);
 
         do {
             turn();
@@ -68,7 +77,6 @@ public class Game {
 
         view.displayXPlaysFirst(nextToPlay);
         setNextRollToPlay(player1Roll, player2Roll);
-
     }
 
     private void setNextRollToPlay(int dice1, int dice2) {
@@ -98,7 +106,7 @@ public class Game {
             if (playerInput instanceof RollCommand) {
                 roll();
                 int pipCount = calculatePipCount(nextToPlay.getColor());
-                view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, pipCount);
+                view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, pipCount, matchScore.get(player1), matchScore.get(player2), matchLength);
             }
 
             if (playerInput instanceof PipCommand) {
@@ -119,14 +127,13 @@ public class Game {
             return;
         }
 
-        // TODO: this is falsely triggering when there are no possible moves
         if (possibleMoveSequences.size() == 1) {
-            List<Move> onlyPossibleMoves = possibleMoveSequences.getFirst();
+            List<Move> onlyPossibleMoves = possibleMoveSequences.get(0);
             view.displayOnlyOnePossibleMove(onlyPossibleMoves);
             for (Move move : onlyPossibleMoves) {
                 MoveExecutor.executeMove(board, move);
             }
-            view.displayBoard(board.cloneBoard());
+            view.displayBoard(board.cloneBoard(), null, null, 0, matchScore.get(player1), matchScore.get(player2), matchLength);
             nextRollToPlay.clear();
             return;
         }
@@ -141,7 +148,7 @@ public class Game {
             MoveExecutor.executeMove(board, move);
         }
 
-        view.displayBoard(board.cloneBoard());
+        view.displayBoard(board.cloneBoard(), null, null, 0, matchScore.get(player1), matchScore.get(player2), matchLength);
 
         nextRollToPlay.clear();
     }
@@ -151,7 +158,6 @@ public class Game {
 
         Board boardClone = board.cloneBoard();
         Off off = boardClone.getOff();
-        // TODO: Sprint 3: number of points won depends on double dice, gammon, backgammon
         if (off.getOffOfColor(player1.getColor()).size() == numberOfCheckersOffToWin) {
             return new GameWinner(player1, 1);
         }
@@ -184,7 +190,7 @@ public class Game {
 
     private void roll() {
         List<Integer> diceFaceValue = dice.roll();
-        setNextRollToPlay(diceFaceValue.getFirst(), diceFaceValue.getLast());
-        view.displayRoll(nextRollToPlay);
+        setNextRollToPlay(diceFaceValue.get(0), diceFaceValue.get(1));
+        view.displayRoll(nextToPlay, nextRollToPlay);
     }
 }

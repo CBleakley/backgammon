@@ -133,29 +133,28 @@ public class View {
 
     public void displayRoll(List<Integer> roll) {
         if (roll.size() == 2) {
-            display(String.format(Messages.PLAYER_ROLL, roll.getFirst(), roll.getLast()));
+            display(String.format(Messages.PLAYER_ROLL, roll.get(0), roll.get(1)));
             return;
         }
-        display(String.format(Messages.PLAYER_ROLL_DOUBLES, roll.getFirst()));
+        display(String.format(Messages.PLAYER_ROLL_DOUBLES, roll.get(0)));
     }
 
-    // Makes the rollToPlay argument in displayBoard() default to null if not specified
-    public void displayBoard(Board board) {
-        displayBoard(board, null, null, null);
-    }
-
-    public void displayBoard(Board board, List<Integer> rollToPlay, Player playerToPlay, Integer pip) {
+    // Updated displayBoard method to accept match score and match length
+    public void displayBoard(Board board, List<Integer> rollToPlay, Player playerToPlay, int pip, int matchScore1, int matchScore2, int matchLength) {
         if (playerToPlay != null) {
-            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay, playerToPlay.getColor(), 0, 0, 0);
+            // Display board with player-specific details
+            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay, playerToPlay.getColor(), matchScore1, matchScore2, matchLength);
             String colorCode = getColorANSI(playerToPlay.getColor());
             String name = playerToPlay.getName();
             display("\n" + String.format(Messages.BOARD_TITLE, colorCode, name, pip));
             display(boardToDisplay);
-            return;
+        } else {
+            // Display board without player-specific details
+            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay, null, matchScore1, matchScore2, matchLength);
+            display("\n" + boardToDisplay);
         }
-        String boardToDisplay = BoardDisplayBuilder.buildBoard(board);
-        display("\n" + boardToDisplay);
     }
+
 
     public void displayPipCount(int redPipCount, int bluePipCount) {
         display("Red Pip Count: " + redPipCount);
@@ -209,6 +208,7 @@ public class View {
             display(Messages.PLEASE_TRY_AGAIN);
         }
     }
+
     public boolean promptStartNewMatch() {
         display("Would you like to start a new match? (yes/no)");
         while (true) {

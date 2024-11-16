@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Stack;
 
 public class BoardDisplayBuilder {
-    static public String buildBoard(Board board) {
-        return buildBoard(board, null, null, 0, 0, 0);
-    }
+
 
     static public String buildBoard(Board board, List<Integer> rollToPlay, Color colorToPlay, int matchScore1, int matchScore2, int matchLength) {
         List<Stack<Checker>> checkersOnPoints = getCheckersOnPoints(board.getPoints());
@@ -18,7 +16,9 @@ public class BoardDisplayBuilder {
 
         // Add match score and length at the top
         displayBoard.append(String.format(BoardFormatting.MATCH_INFO, matchScore1, matchScore2, matchLength));
+        displayBoard.append("\n"); // Newline after match info
 
+        // Display top section of the board
         Stack<Checker> redOff = board.getOff().getOffOfColor(Color.RED);
         String numberOfRedCheckersOff = String.format(BoardFormatting.RED_NUMBER, redOff.size());
         if (colorToPlay == Color.BLUE) {
@@ -29,6 +29,7 @@ public class BoardDisplayBuilder {
             displayBoard.append(String.format(BoardFormatting.NO_PIP_BOARDER, numberOfRedCheckersOff));
         }
 
+        // Render top points
         int maxOfTopPoints = getMaxSizeInRange(checkersOnPoints, 12, 24);
         Bar bar = board.getBar();
         Stack<Checker> blueBar = bar.getBarOfColor(Color.BLUE);
@@ -60,6 +61,7 @@ public class BoardDisplayBuilder {
             displayBoard.append("\n");
         }
 
+        // Add dice rolls (if applicable)
         if (rollToPlay == null) {
             displayBoard.append(BoardFormatting.EMPTY_BOARD_LINE);
         } else if (rollToPlay.size() == 2) {
@@ -69,6 +71,7 @@ public class BoardDisplayBuilder {
                     rollToPlay.get(0), rollToPlay.get(1), rollToPlay.get(2), rollToPlay.get(3)));
         }
 
+        // Render bottom points
         int maxOfBottomPoints = getMaxSizeInRange(checkersOnPoints, 0, 12);
         Stack<Checker> redBar = bar.getBarOfColor(Color.RED);
         for (int j = maxOfBottomPoints; j > 0; j--) {
@@ -99,6 +102,7 @@ public class BoardDisplayBuilder {
             displayBoard.append("\n");
         }
 
+        // Display bottom section of the board
         Stack<Checker> blueOff = board.getOff().getOffOfColor(Color.BLUE);
         String numberOfBlueCheckersOff = String.format(BoardFormatting.BLUE_NUMBER, blueOff.size());
         if (colorToPlay == Color.BLUE) {
