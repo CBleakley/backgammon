@@ -7,7 +7,12 @@ class Messages {
 
     static final String MATCH_QUIT = "Match was quit";
     static final String MATCH_WIN = COLORED_PLAYER_NAME + " won the match!";
+    static final String GAME_WINNER = COLORED_PLAYER_NAME + " won the game, winning %s point(s)";
 
+    static final String ENTER_TO_CONTINUE = "Press ENTER to continue to the next game";
+
+    static final String MATCH_SCORE = COLORED_PLAYER_NAME + " - %s | " + COLORED_PLAYER_NAME + " - %s";
+    static final String PLAYING_TO = "Playing to %s";
     static final String BOARD_TITLE = COLORED_PLAYER_NAME + "  pip: %s";
 
     static final String INVALID_INPUT = "Invalid input: ";
@@ -20,6 +25,10 @@ class Messages {
     static final String INVALID_POSITIVE = INVALID_INPUT + "must be a positive";
     static final String INVALID_INTEGER = INVALID_INPUT + "must be a positive whole number";
     static final String OUT_OF_VALID_RANGE = INVALID_INPUT + "must be between 1 and %s";
+
+    static final String DOUBLE_DICE_OWNER = COLORED_PLAYER_NAME + " owns the double dice, you cannot offer it";
+    static final String OFFER_DOUBLE = COLORED_PLAYER_NAME + " accept or refuse double";
+    static final String INVALID_DECISION = INVALID_INPUT + " must be \"accept\" or \"refuse\"";
 
     static final String INITIAL_ROLL_MESSAGE = COLORED_PLAYER_NAME + " rolled a %s";
     static final String ROLL_AGAIN = "Both players rolled the same, roll again...";

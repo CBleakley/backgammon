@@ -1,22 +1,22 @@
 package backgammon.view;
 
+import backgammon.Dice.DoubleDice;
 import backgammon.board.*;
+import backgammon.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 public class BoardDisplayBuilder {
 
 
-    static public String buildBoard(Board board, List<Integer> rollToPlay, Color colorToPlay, int matchScore1, int matchScore2, int matchLength) {
+    static public String buildBoard(Board board, DoubleDice doubleDice, List<Integer> rollToPlay, Color colorToPlay) {
         List<Stack<Checker>> checkersOnPoints = getCheckersOnPoints(board.getPoints());
+        Player doubleDiceOwner = doubleDice.getOwner();
 
         StringBuilder displayBoard = new StringBuilder();
-
-        // Add match score and length at the top
-        displayBoard.append(String.format(BoardFormatting.MATCH_INFO, matchScore1, matchScore2, matchLength));
-        displayBoard.append("\n"); // Newline after match info
 
         // Display top section of the board
         Stack<Checker> redOff = board.getOff().getOffOfColor(Color.RED);
@@ -28,6 +28,12 @@ public class BoardDisplayBuilder {
         } else {
             displayBoard.append(String.format(BoardFormatting.NO_PIP_BOARDER, numberOfRedCheckersOff));
         }
+
+        if (doubleDiceOwner != null && doubleDice.getOwner().getColor() == Color.RED) {
+            displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier() * 2));
+        }
+
+        displayBoard.append("\n");
 
         // Render top points
         int maxOfTopPoints = getMaxSizeInRange(checkersOnPoints, 12, 24);
@@ -71,6 +77,12 @@ public class BoardDisplayBuilder {
                     rollToPlay.get(0), rollToPlay.get(1), rollToPlay.get(2), rollToPlay.get(3)));
         }
 
+        if (doubleDiceOwner == null) {
+            displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier() * 2));
+        }
+
+        displayBoard.append("\n");
+
         // Render bottom points
         int maxOfBottomPoints = getMaxSizeInRange(checkersOnPoints, 0, 12);
         Stack<Checker> redBar = bar.getBarOfColor(Color.RED);
@@ -112,6 +124,12 @@ public class BoardDisplayBuilder {
         } else {
             displayBoard.append(String.format(BoardFormatting.NO_PIP_BOARDER, numberOfBlueCheckersOff));
         }
+
+        if (doubleDiceOwner != null && doubleDiceOwner.getColor() == Color.BLUE) {
+            displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier() * 2));
+        }
+
+        displayBoard.append("\n");
 
         return displayBoard.toString();
     }

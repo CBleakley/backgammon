@@ -50,7 +50,10 @@ public class Match {
                 } else {
                     break;
                 }
+            } else {
+                view.displayGameResult(gameWinner.getWinner(), gameWinner.getPointsWon());
             }
+
         } while (!matchOver);
     }
 

@@ -2,6 +2,7 @@ package backgammon.gameLogic;
 
 import backgammon.Dice.DicePair;
 import backgammon.Dice.Die;
+import backgammon.Dice.DoubleDice;
 import backgammon.PlayerInput.*;
 import backgammon.board.*;
 import backgammon.player.Player;
@@ -28,10 +29,13 @@ public class Game {
     private final Map<Player, Integer> matchScore;
     private final int matchLength;
 
+    private final DoubleDice doubleDice;
+
     public Game(View view, Player player1, Player player2, Map<Player, Integer> matchScore, int matchLength) {
         this.view = view;
         this.board = new Board();
         this.dice = new DicePair();
+        this.doubleDice = new DoubleDice();
 
         this.player1 = player1;
         this.player2 = player2;
@@ -44,12 +48,10 @@ public class Game {
 
     public GameWinner play() {
         makeInitialRolls();
-        int pipCount = calculatePipCount(nextToPlay.getColor());
-        view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, pipCount, matchScore.get(player1), matchScore.get(player2), matchLength);
+        displayBoardWithRoll();
 
         do {
-            turn();
-            GameWinner gameWinner = checkGameWon();
+            GameWinner gameWinner = turn();
             if (gameWinner != null) { return gameWinner; }
             passToNextPlayer();
         } while(!gameQuit);
@@ -94,27 +96,28 @@ public class Game {
         nextRollToPlay.add(dice1);
     }
 
-    private void turn() {
+    private GameWinner turn() {
         // Check if we need to roll, which should only happen after the first turn
         while (nextRollToPlay.isEmpty()) {
             PlayerInput playerInput = view.getPlayerInput(nextToPlay);
             if (playerInput instanceof QuitCommand) {
                 gameQuit = true;
-                return;
+                return null;
             }
 
             if (playerInput instanceof RollCommand) {
                 roll();
-                int pipCount = calculatePipCount(nextToPlay.getColor());
-                view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, pipCount, matchScore.get(player1), matchScore.get(player2), matchLength);
-            }
-
-            if (playerInput instanceof PipCommand) {
+                displayBoardWithRoll();
+            } else if (playerInput instanceof SetDiceCommand) {
+                setDice((SetDiceCommand) playerInput);
+                displayBoardWithRoll();
+            } else if (playerInput instanceof PipCommand) {
                 displayPipCounts();
-            }
-
-            if (playerInput instanceof HintCommand) {
+            } else if (playerInput instanceof HintCommand) {
                 displayHint();
+            } else if (playerInput instanceof DoubleCommand) {
+                GameWinner gameWinner = offerDouble();
+                if (gameWinner != null) return gameWinner;
             }
         }
 
@@ -124,7 +127,7 @@ public class Game {
         if (possibleMoveSequences.isEmpty()) {
             view.displayNoMovesAvailable(nextToPlay);
             nextRollToPlay.clear();
-            return;
+            return null;
         }
 
         if (possibleMoveSequences.size() == 1) {
@@ -133,9 +136,9 @@ public class Game {
             for (Move move : onlyPossibleMoves) {
                 MoveExecutor.executeMove(board, move);
             }
-            view.displayBoard(board.cloneBoard(), null, null, 0, matchScore.get(player1), matchScore.get(player2), matchLength);
+            displayBoardNoRoll();
             nextRollToPlay.clear();
-            return;
+            return checkGameWon();
         }
 
         view.displayPossibleMoves(possibleMoveSequences);
@@ -148,9 +151,10 @@ public class Game {
             MoveExecutor.executeMove(board, move);
         }
 
-        view.displayBoard(board.cloneBoard(), null, null, 0, matchScore.get(player1), matchScore.get(player2), matchLength);
+        displayBoardNoRoll();
 
         nextRollToPlay.clear();
+        return checkGameWon();
     }
 
     private GameWinner checkGameWon() {
@@ -159,11 +163,11 @@ public class Game {
         Board boardClone = board.cloneBoard();
         Off off = boardClone.getOff();
         if (off.getOffOfColor(player1.getColor()).size() == numberOfCheckersOffToWin) {
-            return new GameWinner(player1, 1);
+            return new GameWinner(player1, doubleDice.getMultiplier());
         }
 
         if (off.getOffOfColor((player2.getColor())).size() == numberOfCheckersOffToWin) {
-            return new GameWinner(player2, 1);
+            return new GameWinner(player2, doubleDice.getMultiplier());
         }
 
         return null;
@@ -184,6 +188,24 @@ public class Game {
         view.displayHint();
     }
 
+    private GameWinner offerDouble() {
+        if (doubleDice.getOwner() != null && nextToPlay != doubleDice.getOwner()) {
+            view.cannotOfferDouble(doubleDice.getOwner());
+            return null;
+        }
+
+        Player offerRecipient = (nextToPlay == player1) ? player2 : player1;
+        boolean accepted = view.getDoubleDecision(offerRecipient);
+
+        if (accepted) {
+            doubleDice.updateMultiplier();
+            doubleDice.setOwner(offerRecipient);
+            return null;
+        }
+
+        return new GameWinner(nextToPlay, doubleDice.getMultiplier());
+    }
+
     private void passToNextPlayer() {
         nextToPlay = (nextToPlay == player1) ? player2 : player1;
     }
@@ -192,5 +214,20 @@ public class Game {
         List<Integer> diceFaceValue = dice.roll();
         setNextRollToPlay(diceFaceValue.get(0), diceFaceValue.get(1));
         view.displayRoll(nextToPlay, nextRollToPlay);
+    }
+
+    private void setDice(SetDiceCommand setDiceCommand) {
+        setNextRollToPlay(setDiceCommand.getDice1(), setDiceCommand.getDice2());
+    }
+
+    private void displayBoardNoRoll() {
+        view.displayBoard(board.cloneBoard(), null, null, null, player1, matchScore.get(player1),
+                player2, matchScore.get(player2), matchLength, doubleDice);
+    }
+
+    private void displayBoardWithRoll() {
+        int pipCount = calculatePipCount(nextToPlay.getColor());
+        view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, pipCount, player1, matchScore.get(player1),
+                player2, matchScore.get(player2), matchLength, doubleDice);
     }
 }

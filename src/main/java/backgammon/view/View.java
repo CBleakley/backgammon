@@ -1,5 +1,6 @@
 package backgammon.view;
 
+import backgammon.Dice.DoubleDice;
 import backgammon.PlayerInput.*;
 import backgammon.board.Board;
 import backgammon.board.Color;
@@ -29,6 +30,12 @@ public class View {
         String colorCode = getColorANSI(winner.getColor());
         String name = winner.getName();
         display(String.format(Messages.MATCH_WIN, colorCode, name));
+    }
+
+    public void displayGameResult(Player winner, int pointsWon) {
+        display(String.format(Messages.GAME_WINNER, getColorANSI(winner.getColor()), winner.getName(), pointsWon));
+        display(Messages.ENTER_TO_CONTINUE);
+        getInput();
     }
 
     public Map<Color, String> retrievePlayerNames() {
@@ -121,44 +128,74 @@ public class View {
         RollCommand rollCommand = RollCommand.parse(cleanedInput);
         if (rollCommand != null) return rollCommand;
 
+        SetDiceCommand setDiceCommand = SetDiceCommand.parse(cleanedInput);
+        if (setDiceCommand != null) return setDiceCommand;
+
         PipCommand pipCommand = PipCommand.parse(cleanedInput);
         if (pipCommand != null) return pipCommand;
 
         HintCommand hintCommand = HintCommand.parse(cleanedInput);
         if (hintCommand != null) return hintCommand;
 
+        DoubleCommand doubleCommand = DoubleCommand.parse(cleanedInput);
+        if (doubleCommand != null) return doubleCommand;
+
         display(Messages.INVALID_COMMAND);
         return null;
     }
 
-    public void displayRoll(List<Integer> roll) {
-        if (roll.size() == 2) {
-            display(String.format(Messages.PLAYER_ROLL, roll.get(0), roll.get(1)));
-            return;
-        }
-        display(String.format(Messages.PLAYER_ROLL_DOUBLES, roll.get(0)));
-    }
-
     // Updated displayBoard method to accept match score and match length
-    public void displayBoard(Board board, List<Integer> rollToPlay, Player playerToPlay, int pip, int matchScore1, int matchScore2, int matchLength) {
+    public void displayBoard(Board board, List<Integer> rollToPlay, Player playerToPlay, Integer pip,
+                             Player player1, int player1Score, Player player2, int player2Score, int matchLength, DoubleDice doubleDice) {
+
+        display("\n");
         if (playerToPlay != null) {
+            displayMatchInfo(player1, player1Score, player2, player2Score, matchLength);
+
             // Display board with player-specific details
-            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay, playerToPlay.getColor(), matchScore1, matchScore2, matchLength);
             String colorCode = getColorANSI(playerToPlay.getColor());
             String name = playerToPlay.getName();
             display("\n" + String.format(Messages.BOARD_TITLE, colorCode, name, pip));
+
+            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, doubleDice, rollToPlay, playerToPlay.getColor());
             display(boardToDisplay);
         } else {
+            displayMatchInfo(player1, player1Score, player2, player2Score, matchLength);
+
             // Display board without player-specific details
-            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, rollToPlay, null, matchScore1, matchScore2, matchLength);
+            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, doubleDice, rollToPlay, null);
             display("\n" + boardToDisplay);
         }
     }
 
+    private void displayMatchInfo(Player player1, int player1Score, Player player2, int player2Score, int matchLength) {
+        display(String.format(Messages.PLAYING_TO, matchLength));
+        display(String.format(Messages.MATCH_SCORE, getColorANSI(player1.getColor()), player1.getName(), player1Score,
+                getColorANSI(player2.getColor()), player2.getName(), player2Score));
+    }
 
     public void displayPipCount(int redPipCount, int bluePipCount) {
         display("Red Pip Count: " + redPipCount);
         display("Blue Pip Count: " + bluePipCount + "\n");
+    }
+
+    public boolean getDoubleDecision(Player player) {
+        String name = player.getName();
+        String colorCode = getColorANSI(player.getColor());
+        boolean accepted;
+        while (true) {
+            display(String.format(Messages.OFFER_DOUBLE, colorCode, name));
+            String commandLineInput = cleanInput(getInput());
+
+            if (commandLineInput.equalsIgnoreCase("accept")) return true;
+            if (commandLineInput.equalsIgnoreCase("refuse")) return false;
+
+            display(Messages.INVALID_DECISION);
+        }
+    }
+
+    public void cannotOfferDouble(Player owner) {
+        display(String.format(Messages.DOUBLE_DICE_OWNER, getColorANSI(owner.getColor()), owner.getName()));
     }
 
     public void displayHint() {
