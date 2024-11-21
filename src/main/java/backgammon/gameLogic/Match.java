@@ -51,7 +51,7 @@ public class Match {
                     break;
                 }
             } else {
-                view.displayGameResult(gameWinner.getWinner(), gameWinner.getPointsWon());
+                displayGameResult(gameWinner);
             }
 
         } while (!matchOver);
@@ -86,5 +86,16 @@ public class Match {
         setupMatch();
         matchOver = false;
         matchWinner = null;
+    }
+
+    private void displayGameResult(GameWinner gameWinner) {
+        switch (gameWinner.getEndingType()) {
+            case SINGLE -> view.displaySingleWin();
+            case DOUBLE_REFUSED -> view.displayDoubleRefused();
+            case GAMMON -> view.displayGammonWin();
+            case BACKGAMMON -> view.displayBackgammonWin();
+        }
+
+        view.displayGameResult(gameWinner.getWinner(), gameWinner.getPointsWon());
     }
 }

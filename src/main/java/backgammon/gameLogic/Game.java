@@ -84,16 +84,15 @@ public class Game {
     private void setNextRollToPlay(int dice1, int dice2) {
         nextRollToPlay.clear();
 
-        if(dice1 != dice2) {
-            nextRollToPlay.add(dice1);
-            nextRollToPlay.add(dice2);
+        if (dice1 == dice2) {
+            for (int i = 0; i < 4; i++) {
+                nextRollToPlay.add(dice1);
+            }
             return;
         }
 
         nextRollToPlay.add(dice1);
-        nextRollToPlay.add(dice1);
-        nextRollToPlay.add(dice1);
-        nextRollToPlay.add(dice1);
+        nextRollToPlay.add(dice2);
     }
 
     private GameWinner turn() {
@@ -108,8 +107,8 @@ public class Game {
             if (playerInput instanceof RollCommand) {
                 roll();
                 displayBoardWithRoll();
-            } else if (playerInput instanceof SetDiceCommand) {
-                setDice((SetDiceCommand) playerInput);
+            } else if (playerInput instanceof SetDiceCommand setDiceCommand) {
+                setNextRollToPlay(setDiceCommand.getDice1(), setDiceCommand.getDice2());
                 displayBoardWithRoll();
             } else if (playerInput instanceof PipCommand) {
                 displayPipCounts();
@@ -138,7 +137,7 @@ public class Game {
             }
             displayBoardNoRoll();
             nextRollToPlay.clear();
-            return checkGameWon();
+            return GameWinChecker.checkGameWon(board.cloneBoard(), doubleDice, player1, player2);
         }
 
         view.displayPossibleMoves(possibleMoveSequences);
@@ -154,23 +153,7 @@ public class Game {
         displayBoardNoRoll();
 
         nextRollToPlay.clear();
-        return checkGameWon();
-    }
-
-    private GameWinner checkGameWon() {
-        int numberOfCheckersOffToWin = Board.NUMBER_OF_CHECKERS_PER_PLAYER;
-
-        Board boardClone = board.cloneBoard();
-        Off off = boardClone.getOff();
-        if (off.getOffOfColor(player1.getColor()).size() == numberOfCheckersOffToWin) {
-            return new GameWinner(player1, doubleDice.getMultiplier());
-        }
-
-        if (off.getOffOfColor((player2.getColor())).size() == numberOfCheckersOffToWin) {
-            return new GameWinner(player2, doubleDice.getMultiplier());
-        }
-
-        return null;
+        return GameWinChecker.checkGameWon(board.cloneBoard(), doubleDice, player1, player2);
     }
 
     private int calculatePipCount(Color color) {
@@ -185,7 +168,8 @@ public class Game {
     }
 
     private void displayHint() {
-        view.displayHint();
+        Player doubleDiceOwner = doubleDice.getOwner();
+        view.displayHint(doubleDiceOwner == null || doubleDiceOwner == nextToPlay);
     }
 
     private GameWinner offerDouble() {
@@ -203,7 +187,7 @@ public class Game {
             return null;
         }
 
-        return new GameWinner(nextToPlay, doubleDice.getMultiplier());
+        return new GameWinner(nextToPlay, doubleDice.getMultiplier(), EndingType.DOUBLE_REFUSED);
     }
 
     private void passToNextPlayer() {
@@ -214,10 +198,6 @@ public class Game {
         List<Integer> diceFaceValue = dice.roll();
         setNextRollToPlay(diceFaceValue.get(0), diceFaceValue.get(1));
         view.displayRoll(nextToPlay, nextRollToPlay);
-    }
-
-    private void setDice(SetDiceCommand setDiceCommand) {
-        setNextRollToPlay(setDiceCommand.getDice1(), setDiceCommand.getDice2());
     }
 
     private void displayBoardNoRoll() {

@@ -32,6 +32,14 @@ public class View {
         display(String.format(Messages.MATCH_WIN, colorCode, name));
     }
 
+    public void displaySingleWin() { display(Messages.SINGLE_WIN); }
+
+    public void displayDoubleRefused() { display(Messages.DOUBLE_REFUSED); }
+
+    public void displayGammonWin() { display(Messages.GAMMON_WIN); }
+
+    public void displayBackgammonWin() { display(Messages.BACKGAMMON_WIN); }
+
     public void displayGameResult(Player winner, int pointsWon) {
         display(String.format(Messages.GAME_WINNER, getColorANSI(winner.getColor()), winner.getName(), pointsWon));
         display(Messages.ENTER_TO_CONTINUE);
@@ -198,7 +206,11 @@ public class View {
         display(String.format(Messages.DOUBLE_DICE_OWNER, getColorANSI(owner.getColor()), owner.getName()));
     }
 
-    public void displayHint() {
+    public void displayHint(boolean doubleAvailable) {
+        if (doubleAvailable) {
+            display(Messages.HINT_WITH_DOUBLE);
+            return;
+        }
         display(Messages.HINT);
     }
 
