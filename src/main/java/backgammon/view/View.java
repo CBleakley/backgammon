@@ -7,17 +7,65 @@ import backgammon.board.Color;
 import backgammon.gameLogic.Move;
 import backgammon.player.Player;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class View {
-    final private Scanner scanner = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in);
+    private BufferedReader fileReader = null;
 
     public void display(String message) {
         System.out.println(message);
     }
 
     public String getInput() {
+        try {
+            if (fileReader != null) {
+                String line = fileReader.readLine();
+                if (line != null) {
+                    display("> " + line); // Show the command being executed from the file
+                    return line;
+                } else {
+                    closeFileReader(); // EOF reached, switch back to console input
+                }
+            }
+        } catch (IOException e) {
+            display("Error reading from file: " + e.getMessage());
+            closeFileReader(); // Ensure fallback to console input
+        }
         return scanner.nextLine();
+    }
+
+    public void setInputSource(String filename) {
+        if (filename == null) {
+            // Reset to console input
+            closeFileReader();
+            display("Input source reset to console.");
+        } else {
+            // Switch to file input
+            try {
+                fileReader = new BufferedReader(new FileReader(filename));
+                display("Switched input source to file: " + filename);
+            } catch (IOException e) {
+                display("Error opening file: " + e.getMessage());
+                System.out.println("Current directory: " + System.getProperty("user.dir"));
+                closeFileReader(); // Reset to console input in case of error
+            }
+        }
+    }
+
+
+    private void closeFileReader() {
+        if (fileReader != null) {
+            try {
+                fileReader.close();
+            } catch (IOException e) {
+                display("Error closing file: " + e.getMessage());
+            }
+            fileReader = null;
+        }
     }
 
     public void displayWelcomeMessage() {
@@ -118,7 +166,7 @@ public class View {
             String commandLineInput = getInput();
 
             playerInput = parsePlayerInput(commandLineInput);
-        } while(playerInput == null);
+        } while (playerInput == null);
 
         return playerInput;
     }
@@ -147,6 +195,11 @@ public class View {
 
         DoubleCommand doubleCommand = DoubleCommand.parse(cleanedInput);
         if (doubleCommand != null) return doubleCommand;
+
+        TestCommand testCommand = TestCommand.parse(input);
+        if (testCommand != null) {
+            return testCommand;
+        }
 
         display(Messages.INVALID_COMMAND);
         return null;
@@ -190,7 +243,6 @@ public class View {
     public boolean getDoubleDecision(Player player) {
         String name = player.getName();
         String colorCode = getColorANSI(player.getColor());
-        boolean accepted;
         while (true) {
             display(String.format(Messages.OFFER_DOUBLE, colorCode, name));
             String commandLineInput = cleanInput(getInput());
@@ -217,7 +269,7 @@ public class View {
     public void displayPossibleMoves(List<List<Move>> possibleMoveSequences) {
         display(Messages.POSSIBLE_MOVES_TITLE);
         for (int i = 0; i < possibleMoveSequences.size(); i++) {
-            display(String.format(Messages.MOVE_OPTION_TITLE, 1+i));
+            display(String.format(Messages.MOVE_OPTION_TITLE, 1 + i));
             for (Move move : possibleMoveSequences.get(i)) {
                 display("  " + move);
             }

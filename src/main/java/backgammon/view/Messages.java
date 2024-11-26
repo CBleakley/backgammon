@@ -36,7 +36,7 @@ class Messages {
 
     static final String INITIAL_ROLL_MESSAGE = COLORED_PLAYER_NAME + " rolled a %s";
     static final String ROLL_AGAIN = "Both players rolled the same, roll again...";
-    static final String FIRST_TO_PLAY = COLORED_PLAYER_NAME + " rolled the higher number, and therfore plays first";
+    static final String FIRST_TO_PLAY = COLORED_PLAYER_NAME + " rolled the higher number, and therefore plays first";
 
     static final String PLAYER_INPUT_PROMPT = COLORED_PLAYER_NAME + " please enter a command (enter \"hint\" for a list of commands): ";
 
@@ -58,6 +58,8 @@ class Messages {
                 "quit"
                 "roll"
                 "pip"
+                "test <filename>"
+                “dice <int> <int>”
                 """;
     static final String HINT_WITH_DOUBLE = HINT + "   \"hint\"\n";
 }

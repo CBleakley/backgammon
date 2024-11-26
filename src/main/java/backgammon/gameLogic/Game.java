@@ -5,9 +5,11 @@ import backgammon.Dice.Die;
 import backgammon.Dice.DoubleDice;
 import backgammon.PlayerInput.*;
 import backgammon.board.*;
+import backgammon.input.FileInputSource;
 import backgammon.player.Player;
 import backgammon.view.View;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,6 @@ public class Game {
 
     private boolean gameQuit = false;
 
-    // Added fields for match score and match length
     private final Map<Player, Integer> matchScore;
     private final int matchLength;
 
@@ -52,9 +53,11 @@ public class Game {
 
         do {
             GameWinner gameWinner = turn();
-            if (gameWinner != null) { return gameWinner; }
+            if (gameWinner != null) {
+                return gameWinner;
+            }
             passToNextPlayer();
-        } while(!gameQuit);
+        } while (!gameQuit);
 
         return null;
     }
@@ -70,10 +73,10 @@ public class Game {
             player2Roll = die.roll();
             view.displayInitialRoll(player2, player2Roll);
 
-            if(player1Roll == player2Roll) {
+            if (player1Roll == player2Roll) {
                 view.displayRollAgain();
             }
-        } while(player1Roll == player2Roll);
+        } while (player1Roll == player2Roll);
 
         nextToPlay = (player1Roll > player2Roll) ? player1 : player2;
 
@@ -96,15 +99,14 @@ public class Game {
     }
 
     private GameWinner turn() {
-        // Check if we need to roll, which should only happen after the first turn
         while (nextRollToPlay.isEmpty()) {
             PlayerInput playerInput = view.getPlayerInput(nextToPlay);
             if (playerInput instanceof QuitCommand) {
                 gameQuit = true;
                 return null;
-            }
-
-            if (playerInput instanceof RollCommand) {
+            } else if (playerInput instanceof TestCommand testCommand) {
+                handleTestCommand(testCommand);
+            } else if (playerInput instanceof RollCommand) {
                 roll();
                 displayBoardWithRoll();
             } else if (playerInput instanceof SetDiceCommand setDiceCommand) {
@@ -117,10 +119,12 @@ public class Game {
             } else if (playerInput instanceof DoubleCommand) {
                 GameWinner gameWinner = offerDouble();
                 if (gameWinner != null) return gameWinner;
+            } else {
+                view.display("Invalid command. Please try again.");
             }
         }
 
-        // Generate possible moves with the current dice values in nextRollToPlay
+        // Generate possible moves
         List<List<Move>> possibleMoveSequences = MoveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.getColor());
 
         if (possibleMoveSequences.isEmpty()) {
@@ -146,7 +150,7 @@ public class Game {
         int selectedOption = view.promptMoveSelection(possibleMoveSequences.size());
 
         List<Move> selectedMoves = possibleMoveSequences.get(selectedOption);
-        for (Move move : selectedMoves) {   // Apply the selected moves to the actual game board
+        for (Move move : selectedMoves) {
             MoveExecutor.executeMove(board, move);
         }
 
@@ -155,6 +159,12 @@ public class Game {
         nextRollToPlay.clear();
         return GameWinChecker.checkGameWon(board.cloneBoard(), doubleDice, player1, player2);
     }
+
+    private void handleTestCommand(TestCommand testCommand) {
+        String filename = testCommand.getFilename();
+        view.setInputSource(filename); // Pass the filename directly
+    }
+
 
     private int calculatePipCount(Color color) {
         return PipCounter.calculatePipCount(board, color);
