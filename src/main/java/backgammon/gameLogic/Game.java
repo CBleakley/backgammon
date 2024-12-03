@@ -127,7 +127,7 @@ public class Game {
         // Generate possible moves
         List<List<Move>> possibleMoveSequences = MoveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.getColor());
 
-        if (possibleMoveSequences.isEmpty()) {
+        if (possibleMoveSequences.isEmpty() || (possibleMoveSequences.size() == 1 && possibleMoveSequences.get(0).isEmpty())) { // Does the job to check if there are no possible moves
             view.displayNoMovesAvailable(nextToPlay);
             nextRollToPlay.clear();
             return null;

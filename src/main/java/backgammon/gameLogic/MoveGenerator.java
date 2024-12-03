@@ -2,7 +2,6 @@ package backgammon.gameLogic;
 
 import backgammon.board.Board;
 import backgammon.board.Bar;
-import backgammon.board.Checker;
 import backgammon.board.Color;
 import backgammon.board.Point;
 
@@ -11,14 +10,11 @@ import java.util.*;
 public class MoveGenerator {
 
     public static List<List<Move>> generateAllPossibleMoveSequences(Board board, List<Integer> diceValues, Color playerColor) {
-        // Use BFS to explore all possible move sequences
-        // Initialize the queue with the initial state
         Queue<GameState> queue = new LinkedList<>();
         Set<StateKey> visitedStates = new HashSet<>();
         List<List<Move>> result = new ArrayList<>();
         int maxMovesUsed = 0;
 
-        // Initial state
         GameState initialState = new GameState(board.cloneBoard(), new ArrayList<>(diceValues), new ArrayList<>());
         queue.add(initialState);
         visitedStates.add(new StateKey(initialState));
@@ -26,11 +22,9 @@ public class MoveGenerator {
         while (!queue.isEmpty()) {
             GameState currentState = queue.poll();
 
-            // If no remaining dice or no possible moves, collect the move sequence
             if (currentState.remainingDice.isEmpty() || !hasPossibleMoves(currentState.board, currentState.remainingDice, playerColor)) {
                 int movesUsed = currentState.moveSequence.size();
                 if (movesUsed > maxMovesUsed) {
-                    // Found sequences using more dice, clear previous results
                     maxMovesUsed = movesUsed;
                     result.clear();
                 }
@@ -40,30 +34,23 @@ public class MoveGenerator {
                 continue;
             }
 
-            // Generate all possible moves from the current state
             List<MoveOption> possibleMoves = generatePossibleMoves(currentState.board, currentState.remainingDice, playerColor);
 
             for (MoveOption moveOption : possibleMoves) {
-                // Apply the move to a cloned board
                 Board newBoard = currentState.board.cloneBoard();
                 MoveExecutor.executeMove(newBoard, moveOption.move);
 
-                // Prepare new remaining dice
                 List<Integer> newRemainingDice = new ArrayList<>(currentState.remainingDice);
                 newRemainingDice.remove((Integer) moveOption.dieUsed);
 
-                // Prepare new move sequence
                 List<Move> newMoveSequence = new ArrayList<>(currentState.moveSequence);
                 newMoveSequence.add(moveOption.move);
 
-                // Create new state
                 GameState newState = new GameState(newBoard, newRemainingDice, newMoveSequence);
 
-                // Create a key for visited states
                 StateKey newStateKey = new StateKey(newState);
 
                 if (!visitedStates.contains(newStateKey)) {
-                    // Print the move sequence that is being added
                     visitedStates.add(newStateKey);
                     queue.add(newState);
                 }
@@ -83,7 +70,6 @@ public class MoveGenerator {
         return playableDice;
     }
 
-
     private static boolean hasPossibleMoves(Board board, List<Integer> diceValues, Color playerColor) {
         for (int dieValue : diceValues) {
             if (!generatePossibleMovesForDie(board, dieValue, playerColor).isEmpty()) {
@@ -97,29 +83,14 @@ public class MoveGenerator {
         List<MoveOption> moveOptions = new ArrayList<>();
         Set<MoveOption> uniqueMoves = new HashSet<>();
 
-        // Determine playable dice
         List<Integer> playableDice = getPlayableDice(board, diceValues, playerColor);
 
         if (playableDice.isEmpty()) {
-            return moveOptions; // No possible moves
+            return moveOptions;
         }
 
-        // Enforce forced move rules
-        if (playableDice.size() == diceValues.size()) {
-            // All dice can be played, proceed as normal
-        } else if (playableDice.size() == 1) {
-            // Only one die can be played
-            diceValues = new ArrayList<>();
-            diceValues.add(playableDice.get(0));
-        } else if (playableDice.size() > 1) {
-            // Both dice are playable separately, but cannot both be used
-            // Must play the larger die
-            int dieToUse = Collections.max(playableDice);
-            diceValues = new ArrayList<>();
-            diceValues.add(dieToUse);
-        }
+        diceValues = enforceForcedMoveRules(board, playableDice, playerColor);
 
-        // Generate moves using adjusted diceValues
         for (int dieValue : diceValues) {
             List<MoveOption> movesForDie = generatePossibleMovesForDie(board, dieValue, playerColor);
             for (MoveOption moveOption : movesForDie) {
@@ -132,29 +103,66 @@ public class MoveGenerator {
         return moveOptions;
     }
 
+    private static List<Integer> enforceForcedMoveRules(Board board, List<Integer> playableDice, Color playerColor) {
+        if (playableDice.size() == 1) {
+            return new ArrayList<>(Collections.singletonList(playableDice.get(0)));
+        } else if (playableDice.size() > 1 && !canPlayBothDice(board, playableDice, playerColor)) {
+            return new ArrayList<>(Collections.singletonList(Collections.max(playableDice)));
+        }
+        return playableDice;
+    }
+
+    private static boolean canPlayBothDice(Board board, List<Integer> diceValues, Color playerColor) {
+        for (int i = 0; i < diceValues.size(); i++) {
+            int firstDie = diceValues.get(i);
+            for (int j = 0; j < diceValues.size(); j++) {
+                if (i == j) continue;
+                int secondDie = diceValues.get(j);
+
+                Board testBoard = board.cloneBoard();
+                List<Integer> testDice = Arrays.asList(firstDie, secondDie);
+
+                List<MoveOption> firstMoves = generatePossibleMovesForDie(testBoard, firstDie, playerColor);
+                for (MoveOption firstMove : firstMoves) {
+                    MoveExecutor.executeMove(testBoard, firstMove.move);
+
+                    List<MoveOption> secondMoves = generatePossibleMovesForDie(testBoard, secondDie, playerColor);
+                    if (!secondMoves.isEmpty()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     private static List<MoveOption> generatePossibleMovesForDie(Board board, int dieValue, Color playerColor) {
         List<MoveOption> possibleMoves = new ArrayList<>();
-        // TODO: I think this is causing unnecessary forced moves
-        // Check if the player can bear off
-        if (isBearingOff(board, playerColor)) {
-            List<Integer> bearOffPoints = getBearOffPoints(board, dieValue, playerColor);
-            for (int fromPointIndex : bearOffPoints) {
-                Move move = new Move(fromPointIndex, -1, playerColor); // -1 indicates bearing off
-                possibleMoves.add(new MoveOption(move, dieValue));
-            }
-            return possibleMoves;
+
+        boolean canBearOff = isBearingOff(board, playerColor);
+
+        // First, generate all standard moves and exact bear-offs
+        List<MoveOption> standardMoves = generateStandardMoves(board, dieValue, playerColor, canBearOff);
+
+        if (!standardMoves.isEmpty()) {
+            return standardMoves;
         }
 
-        // First, check if the player has any checkers on the bar
+        // If no moves are found, and the player can bear off, consider non-exact bear-offs
+        if (canBearOff) {
+            List<MoveOption> nonExactBearOffMoves = generateNonExactBearOffMoves(board, dieValue, playerColor);
+            possibleMoves.addAll(nonExactBearOffMoves);
+        }
+
+        return possibleMoves;
+    }
+
+    private static List<MoveOption> generateStandardMoves(Board board, int dieValue, Color playerColor, boolean canBearOff) {
+        List<MoveOption> possibleMoves = new ArrayList<>();
+
         if (!board.getBar().getBarOfColor(playerColor).isEmpty()) {
             // The player must enter checkers from the bar
-            int entryPointIndex;
-            if (playerColor == Color.RED) {
-                entryPointIndex = dieValue - 1; // Points are 0-indexed
-            } else { // BLUE
-                entryPointIndex = 24 - dieValue;
-            }
+            int entryPointIndex = (playerColor == Color.RED) ? dieValue - 1 : 24 - dieValue;
 
             if (entryPointIndex >= 0 && entryPointIndex < 24) {
                 Point entryPoint = board.getPoints().get(entryPointIndex);
@@ -164,22 +172,21 @@ public class MoveGenerator {
                 }
             }
         } else {
-            // No checkers on the bar
             List<Point> points = board.getPoints();
             for (int i = 0; i < points.size(); i++) {
                 Point fromPoint = points.get(i);
                 if (fromPoint.hasCheckers() && fromPoint.getTopCheckerColor() == playerColor) {
                     int toPointIndex = (playerColor == Color.RED) ? i + dieValue : i - dieValue;
-
-                    boolean canBearOff = isBearingOff(board, playerColor);
                     boolean isBearingOffMove = false;
 
                     if (canBearOff) {
-                        if ((playerColor == Color.RED && toPointIndex >= 24) ||
-                                (playerColor == Color.BLUE && toPointIndex < 0)) {
-                            // Bearing off
-                            toPointIndex = -1; // Indicate bearing off
-                            isBearingOffMove = true;
+                        int bearOffPointIndex = (playerColor == Color.RED) ? 23 : 0;
+                        if ((playerColor == Color.RED && toPointIndex == 24) ||
+                                (playerColor == Color.BLUE && toPointIndex == -1)) {
+                            if (i == bearOffPointIndex - (dieValue - 1)) {
+                                toPointIndex = -1; // Indicates bearing off
+                                isBearingOffMove = true;
+                            }
                         }
                     }
 
@@ -190,7 +197,6 @@ public class MoveGenerator {
                             possibleMoves.add(new MoveOption(move, dieValue));
                         }
                     } else if (isBearingOffMove) {
-                        // Bearing off move
                         Move move = new Move(i, -1, playerColor);
                         possibleMoves.add(new MoveOption(move, dieValue));
                     }
@@ -201,53 +207,32 @@ public class MoveGenerator {
         return possibleMoves;
     }
 
-    private static List<Integer> getBearOffPoints(Board board, int dieValue, Color playerColor) {
-        List<Integer> bearOffPoints = new ArrayList<>();
+    private static List<MoveOption> generateNonExactBearOffMoves(Board board, int dieValue, Color playerColor) {
+        List<MoveOption> possibleMoves = new ArrayList<>();
         List<Point> points = board.getPoints();
 
-        int start = (playerColor == Color.RED) ? 18 : 0;
-        int end = (playerColor == Color.RED) ? 23 : 5;
-        int direction = (playerColor == Color.RED) ? 1 : -1;
+        int start = (playerColor == Color.RED) ? 23 : 0;
+        int end = (playerColor == Color.RED) ? 18 : 5;
+        int step = (playerColor == Color.RED) ? -1 : 1;
 
-        // Determine target point based on die value
-        int targetPointIndex = (playerColor == Color.RED) ? 24 - dieValue : dieValue - 1;
-
-        // Check if the target point has a checker to bear off
-        if (targetPointIndex >= start && targetPointIndex <= end) {
-            Point targetPoint = points.get(targetPointIndex);
-            if (targetPoint.hasCheckers() && targetPoint.getTopCheckerColor() == playerColor) {
-                bearOffPoints.add(targetPointIndex);
-                return bearOffPoints; // Return immediately if exact match is found
-            }
-        }
-
-        // If no checker is on the exact point, check for higher points
-        boolean foundHigherChecker = false;
-        int rangeStart = (playerColor == Color.RED) ? targetPointIndex + 1 : targetPointIndex - 1;
-        int rangeEnd = (playerColor == Color.RED) ? end + 1 : start - 1;
-        int step = (playerColor == Color.RED) ? 1 : -1;
-
-        for (int i = rangeStart; i != rangeEnd; i += step) {
+        // Iterate over the home board from the furthest point to the nearest
+        for (int i = start; (playerColor == Color.RED) ? i >= end : i <= end; i += step) {
             Point point = points.get(i);
             if (point.hasCheckers() && point.getTopCheckerColor() == playerColor) {
-                foundHigherChecker = true;
-                bearOffPoints.add(i);
-                break;
-            }
-        }
+                // Calculate the distance of the point to the end
+                int pointDistance = (playerColor == Color.RED) ? 24 - i : i + 1;
 
-        // If no higher points have checkers, bear off from the highest occupied point
-        if (!foundHigherChecker) {
-            for (int i = end; i != start - direction; i -= direction) {
-                Point point = points.get(i);
-                if (point.hasCheckers() && point.getTopCheckerColor() == playerColor) {
-                    bearOffPoints.add(i);
-                    break;
+                // Check if the die value is greater than or equal to the distance
+                if (pointDistance <= dieValue) {
+                    // Allow bearing off from this point
+                    Move move = new Move(i, -1, playerColor); // -1 indicates bearing off
+                    possibleMoves.add(new MoveOption(move, dieValue));
+                    break; // Only the furthest point is considered
                 }
             }
         }
 
-        return bearOffPoints;
+        return possibleMoves;
     }
 
 
@@ -255,11 +240,9 @@ public class MoveGenerator {
         if (!point.hasCheckers()) {
             return true;
         }
-
         if (point.getTopCheckerColor() == playerColor) {
             return true;
         }
-
         return point.getNumberOfCheckers() == 1;
     }
 
@@ -277,13 +260,14 @@ public class MoveGenerator {
                 }
             }
         }
+
         return true;
     }
 
     private static boolean isPointInHomeBoard(int pointIndex, Color playerColor) {
         if (playerColor == Color.RED) {
             return pointIndex >= 18 && pointIndex <= 23;
-        } else { // BLUE
+        } else {
             return pointIndex >= 0 && pointIndex <= 5;
         }
     }
@@ -333,15 +317,11 @@ public class MoveGenerator {
                 sb.append(i).append(":").append(point.getTopCheckerColor()).append(":").append(point.getNumberOfCheckers()).append("|");
             }
         }
-        // Include bar and off in the key
         Bar bar = board.getBar();
         sb.append("BarRed:").append(bar.getBarOfColor(Color.RED).size()).append("|");
         sb.append("BarBlue:").append(bar.getBarOfColor(Color.BLUE).size()).append("|");
-
-        // Include off
         sb.append("OffRed:").append(board.getOff().getOffOfColor(Color.RED).size()).append("|");
         sb.append("OffBlue:").append(board.getOff().getOffOfColor(Color.BLUE).size()).append("|");
-
         return sb.toString();
     }
 
