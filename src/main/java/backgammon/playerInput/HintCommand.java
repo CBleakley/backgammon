@@ -1,4 +1,4 @@
-package backgammon.PlayerInput;
+package backgammon.playerInput;
 
 public class HintCommand implements PlayerInput{
 

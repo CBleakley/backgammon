@@ -6,11 +6,9 @@ import backgammon.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 public class BoardDisplayBuilder {
-
 
     static public String buildBoard(Board board, DoubleDice doubleDice, List<Integer> rollToPlay, Color colorToPlay) {
         List<Stack<Checker>> checkersOnPoints = getCheckersOnPoints(board.getPoints());
@@ -29,7 +27,7 @@ public class BoardDisplayBuilder {
             displayBoard.append(String.format(BoardFormatting.NO_PIP_BOARDER, numberOfRedCheckersOff));
         }
 
-        if (doubleDiceOwner != null && doubleDice.getOwner().getColor() == Color.RED) {
+        if (doubleDiceOwner != null && doubleDice.getOwner().color() == Color.RED) {
             displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier() * 2));
         }
 
@@ -125,7 +123,7 @@ public class BoardDisplayBuilder {
             displayBoard.append(String.format(BoardFormatting.NO_PIP_BOARDER, numberOfBlueCheckersOff));
         }
 
-        if (doubleDiceOwner != null && doubleDiceOwner.getColor() == Color.BLUE) {
+        if (doubleDiceOwner != null && doubleDiceOwner.color() == Color.BLUE) {
             displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier() * 2));
         }
 

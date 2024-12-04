@@ -7,7 +7,8 @@ public class Die {
         this.faceValue = null;
     }
 
-    public int getFaceValue() {
+    public Integer getFaceValue() {
+        if (faceValue == null) return null;
         return faceValue;
     }
 

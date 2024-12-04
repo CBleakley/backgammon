@@ -1,4 +1,4 @@
-package backgammon.PlayerInput;
+package backgammon.playerInput;
 
 public class DoubleCommand implements PlayerInput {
     public static DoubleCommand parse(String string) {

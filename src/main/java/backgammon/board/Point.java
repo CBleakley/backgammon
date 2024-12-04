@@ -1,6 +1,5 @@
 package backgammon.board;
 
-import backgammon.board.Color;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
@@ -53,6 +52,5 @@ public class Point {
         clonedPoint.checkerStack.addAll(this.checkerStack);
         return clonedPoint;
     }
-
 
 }

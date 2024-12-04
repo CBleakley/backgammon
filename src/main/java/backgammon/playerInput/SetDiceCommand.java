@@ -1,4 +1,4 @@
-package backgammon.PlayerInput;
+package backgammon.playerInput;
 
 public class SetDiceCommand implements PlayerInput {
     private final int dice1;

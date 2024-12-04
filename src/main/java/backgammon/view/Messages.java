@@ -42,9 +42,6 @@ class Messages {
 
     static final String INVALID_COMMAND = "Invalid Command: enter \"hint\" to see valid commands\n";
 
-    static final String PLAYER_ROLL = "Roll: %s and %s";
-    static final String PLAYER_ROLL_DOUBLES = "Roll: double %s's";
-
     static final String CHOSE_MOVE_PROMPT = "Chose a move sequence (1 to %s): ";
     static final String ONLY_POSSIBLE_MOVE = "Only one possible move, forced to play: ";
     static final String NO_POSSIBLE_MOVES = COLORED_PLAYER_NAME + " has no available moves";
@@ -58,8 +55,6 @@ class Messages {
                 "quit"
                 "roll"
                 "pip"
-                "test <filename>"
-                “dice <int> <int>”
                 """;
     static final String HINT_WITH_DOUBLE = HINT + "   \"hint\"\n";
 }

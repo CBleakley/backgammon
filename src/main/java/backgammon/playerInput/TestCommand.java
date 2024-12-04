@@ -1,4 +1,4 @@
-package backgammon.PlayerInput;
+package backgammon.playerInput;
 
 public class TestCommand implements PlayerInput {
     private final String filename;

@@ -1,7 +1,7 @@
 package backgammon.view;
 
 import backgammon.Dice.DoubleDice;
-import backgammon.PlayerInput.*;
+import backgammon.playerInput.*;
 import backgammon.board.Board;
 import backgammon.board.Color;
 import backgammon.gameLogic.Move;
@@ -75,8 +75,8 @@ public class View {
     public void displayMatchQuitMessage() { display(Messages.MATCH_QUIT); }
 
     public void displayMatchWinMessage(Player winner) {
-        String colorCode = getColorANSI(winner.getColor());
-        String name = winner.getName();
+        String colorCode = getColorANSI(winner.color());
+        String name = winner.name();
         display(String.format(Messages.MATCH_WIN, colorCode, name));
     }
 
@@ -89,7 +89,7 @@ public class View {
     public void displayBackgammonWin() { display(Messages.BACKGAMMON_WIN); }
 
     public void displayGameResult(Player winner, int pointsWon) {
-        display(String.format(Messages.GAME_WINNER, getColorANSI(winner.getColor()), winner.getName(), pointsWon));
+        display(String.format(Messages.GAME_WINNER, getColorANSI(winner.color()), winner.name(), pointsWon));
         display(Messages.ENTER_TO_CONTINUE);
         getInput();
     }
@@ -135,8 +135,8 @@ public class View {
     }
 
     public void displayInitialRoll(Player player, int roll) {
-        String name = player.getName();
-        String colorCode = getColorANSI(player.getColor());
+        String name = player.name();
+        String colorCode = getColorANSI(player.color());
         display(String.format(Messages.INITIAL_ROLL_MESSAGE, colorCode, name, roll));
     }
 
@@ -144,9 +144,9 @@ public class View {
         display(Messages.ROLL_AGAIN);
     }
 
-    public void displayXPlaysFirst(Player firstToPlay) {
-        String name = firstToPlay.getName();
-        String colorCode = getColorANSI(firstToPlay.getColor());
+    public void displayWhoPlaysFirst(Player firstToPlay) {
+        String name = firstToPlay.name();
+        String colorCode = getColorANSI(firstToPlay.color());
         display(String.format(Messages.FIRST_TO_PLAY, colorCode, name));
     }
 
@@ -158,8 +158,8 @@ public class View {
     }
 
     public PlayerInput getPlayerInput(Player player) {
-        String name = player.getName();
-        String colorCode = getColorANSI(player.getColor());
+        String name = player.name();
+        String colorCode = getColorANSI(player.color());
         PlayerInput playerInput;
         do {
             display(String.format(Messages.PLAYER_INPUT_PROMPT, colorCode, name));
@@ -178,31 +178,10 @@ public class View {
     private PlayerInput parsePlayerInput(String input) {
         String cleanedInput = cleanInput(input);
 
-        QuitCommand quitCommand = QuitCommand.parse(cleanedInput);
-        if (quitCommand != null) return quitCommand;
+        PlayerInput playerInput = PlayerInputParser.parsePlayerInput(cleanedInput);
+        if (playerInput == null) display(Messages.INVALID_COMMAND);
 
-        RollCommand rollCommand = RollCommand.parse(cleanedInput);
-        if (rollCommand != null) return rollCommand;
-
-        SetDiceCommand setDiceCommand = SetDiceCommand.parse(cleanedInput);
-        if (setDiceCommand != null) return setDiceCommand;
-
-        PipCommand pipCommand = PipCommand.parse(cleanedInput);
-        if (pipCommand != null) return pipCommand;
-
-        HintCommand hintCommand = HintCommand.parse(cleanedInput);
-        if (hintCommand != null) return hintCommand;
-
-        DoubleCommand doubleCommand = DoubleCommand.parse(cleanedInput);
-        if (doubleCommand != null) return doubleCommand;
-
-        TestCommand testCommand = TestCommand.parse(input);
-        if (testCommand != null) {
-            return testCommand;
-        }
-
-        display(Messages.INVALID_COMMAND);
-        return null;
+        return playerInput;
     }
 
     // Updated displayBoard method to accept match score and match length
@@ -214,11 +193,11 @@ public class View {
             displayMatchInfo(player1, player1Score, player2, player2Score, matchLength);
 
             // Display board with player-specific details
-            String colorCode = getColorANSI(playerToPlay.getColor());
-            String name = playerToPlay.getName();
+            String colorCode = getColorANSI(playerToPlay.color());
+            String name = playerToPlay.name();
             display("\n" + String.format(Messages.BOARD_TITLE, colorCode, name, pip));
 
-            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, doubleDice, rollToPlay, playerToPlay.getColor());
+            String boardToDisplay = BoardDisplayBuilder.buildBoard(board, doubleDice, rollToPlay, playerToPlay.color());
             display(boardToDisplay);
         } else {
             displayMatchInfo(player1, player1Score, player2, player2Score, matchLength);
@@ -231,8 +210,8 @@ public class View {
 
     private void displayMatchInfo(Player player1, int player1Score, Player player2, int player2Score, int matchLength) {
         display(String.format(Messages.PLAYING_TO, matchLength));
-        display(String.format(Messages.MATCH_SCORE, getColorANSI(player1.getColor()), player1.getName(), player1Score,
-                getColorANSI(player2.getColor()), player2.getName(), player2Score));
+        display(String.format(Messages.MATCH_SCORE, getColorANSI(player1.color()), player1.name(), player1Score,
+                getColorANSI(player2.color()), player2.name(), player2Score));
     }
 
     public void displayPipCount(int redPipCount, int bluePipCount) {
@@ -241,8 +220,8 @@ public class View {
     }
 
     public boolean getDoubleDecision(Player player) {
-        String name = player.getName();
-        String colorCode = getColorANSI(player.getColor());
+        String name = player.name();
+        String colorCode = getColorANSI(player.color());
         while (true) {
             display(String.format(Messages.OFFER_DOUBLE, colorCode, name));
             String commandLineInput = cleanInput(getInput());
@@ -255,7 +234,7 @@ public class View {
     }
 
     public void cannotOfferDouble(Player owner) {
-        display(String.format(Messages.DOUBLE_DICE_OWNER, getColorANSI(owner.getColor()), owner.getName()));
+        display(String.format(Messages.DOUBLE_DICE_OWNER, getColorANSI(owner.color()), owner.name()));
     }
 
     public void displayHint(boolean doubleAvailable) {
@@ -277,8 +256,8 @@ public class View {
     }
 
     public void displayNoMovesAvailable(Player player) {
-        String name = player.getName();
-        String colorCode = getColorANSI(player.getColor());
+        String name = player.name();
+        String colorCode = getColorANSI(player.color());
         display(String.format(Messages.NO_POSSIBLE_MOVES, colorCode, name));
     }
 
@@ -287,10 +266,6 @@ public class View {
         for (Move move : moves) {
             display("  " + move);
         }
-    }
-
-    public void displayRoll(Player player, List<Integer> diceRolls) {
-        System.out.println(player.getName() + " rolled: " + diceRolls);
     }
 
     public int promptMoveSelection(int numberOfOptions) {
@@ -313,10 +288,10 @@ public class View {
     public boolean promptStartNewMatch() {
         display("Would you like to start a new match? (yes/no)");
         while (true) {
-            String input = getInput().trim().toLowerCase();
-            if (input.equals("yes")) {
+            String input = cleanInput(getInput());
+            if (input.equalsIgnoreCase("yes")) {
                 return true;
-            } else if (input.equals("no")) {
+            } else if (input.equalsIgnoreCase("no")) {
                 return false;
             } else {
                 display("Invalid input. Please type 'yes' or 'no'.");

@@ -3,13 +3,11 @@ package backgammon.gameLogic;
 import backgammon.Dice.DicePair;
 import backgammon.Dice.Die;
 import backgammon.Dice.DoubleDice;
-import backgammon.PlayerInput.*;
+import backgammon.playerInput.*;
 import backgammon.board.*;
-import backgammon.input.FileInputSource;
 import backgammon.player.Player;
 import backgammon.view.View;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +78,7 @@ public class Game {
 
         nextToPlay = (player1Roll > player2Roll) ? player1 : player2;
 
-        view.displayXPlaysFirst(nextToPlay);
+        view.displayWhoPlaysFirst(nextToPlay);
         setNextRollToPlay(player1Roll, player2Roll);
     }
 
@@ -125,7 +123,7 @@ public class Game {
         }
 
         // Generate possible moves
-        List<List<Move>> possibleMoveSequences = MoveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.getColor());
+        List<List<Move>> possibleMoveSequences = MoveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.color());
 
         if (possibleMoveSequences.isEmpty()) {
             view.displayNoMovesAvailable(nextToPlay);
@@ -207,7 +205,6 @@ public class Game {
     private void roll() {
         List<Integer> diceFaceValue = dice.roll();
         setNextRollToPlay(diceFaceValue.get(0), diceFaceValue.get(1));
-        view.displayRoll(nextToPlay, nextRollToPlay);
     }
 
     private void displayBoardNoRoll() {
@@ -216,7 +213,7 @@ public class Game {
     }
 
     private void displayBoardWithRoll() {
-        int pipCount = calculatePipCount(nextToPlay.getColor());
+        int pipCount = calculatePipCount(nextToPlay.color());
         view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, pipCount, player1, matchScore.get(player1),
                 player2, matchScore.get(player2), matchLength, doubleDice);
     }
