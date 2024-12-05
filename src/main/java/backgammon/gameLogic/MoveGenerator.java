@@ -8,7 +8,7 @@ import backgammon.board.Point;
 import java.util.*;
 
 public class MoveGenerator {
-
+/*
     public static List<List<Move>> generateAllPossibleMoveSequences(Board board, List<Integer> diceValues, Color playerColor) {
         Queue<GameState> queue = new LinkedList<>();
         Set<StateKey> visitedStates = new HashSet<>();
@@ -347,5 +347,5 @@ public class MoveGenerator {
         public int hashCode() {
             return move.hashCode() * 31 + dieUsed;
         }
-    }
+    }*/
 }

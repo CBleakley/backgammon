@@ -248,10 +248,11 @@ public class View {
     public void displayPossibleMoves(List<List<Move>> possibleMoveSequences) {
         display(Messages.POSSIBLE_MOVES_TITLE);
         for (int i = 0; i < possibleMoveSequences.size(); i++) {
-            display(String.format(Messages.MOVE_OPTION_TITLE, 1 + i));
+            String movesToDisplay = " ";
             for (Move move : possibleMoveSequences.get(i)) {
-                display("  " + move);
+                movesToDisplay = movesToDisplay + move + ", ";
             }
+            display(String.format(Messages.MOVE_OPTION_TITLE, 1 + i) + movesToDisplay.substring(0, movesToDisplay.length() - 2));
         }
     }
 
