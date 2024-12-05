@@ -4,10 +4,7 @@ import backgammon.board.Board;
 import backgammon.board.Color;
 import backgammon.board.Point;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 public class NewMoveGenerator {
     public static List<List<Move>> generateAllPossibleMoveSequences(Board board, List<Integer> diceValues, Color playerColor) {
@@ -44,7 +41,13 @@ public class NewMoveGenerator {
                 filteredMoves.add(moveSequence);
             }
         }
+        List<Move> moveOfInterest = new ArrayList<>();
+        moveOfInterest.add(new Move(8, 6, Color.BLUE, 2));
+        moveOfInterest.add(new Move(8, 6, Color.BLUE, 2));
+        moveOfInterest.add(new Move(10, 8, Color.BLUE, 2));
+        moveOfInterest.add(new Move(10, 8, Color.BLUE, 2));
 
+        List<List<Move>> duplicates = new ArrayList<>();
         List<List<Move>> duplicateSequencesRemoved = new ArrayList<>(filteredMoves);
         for (int i = 0; i < duplicateSequencesRemoved.size(); i++) {
             for (int j = i+1; j < duplicateSequencesRemoved.size(); j++) {
@@ -211,10 +214,26 @@ public class NewMoveGenerator {
             return false;
         }
 
-        Set<Move> set1 = new HashSet<>(sequence1);
-        Set<Move> set2 = new HashSet<>(sequence2);
+        Map<Move, Integer> sequence1MovesMap = new HashMap<>();
+        for (Move move : sequence1) {
+            if (sequence1MovesMap.containsKey(move)) {
+                sequence1MovesMap.put(move, sequence1MovesMap.get(move) + 1);
+                continue;
+            }
+            sequence1MovesMap.put(move, 1);
+        }
 
-        return set1.equals(set2);
+        Map<Move, Integer> sequence2MovesMap = new HashMap<>();
+        for (Move move : sequence2) {
+            if (sequence2MovesMap.containsKey(move)) {
+                sequence2MovesMap.put(move, sequence2MovesMap.get(move) + 1);
+                continue;
+            }
+            sequence2MovesMap.put(move, 1);
+        }
+
+
+        return sequence1MovesMap.equals(sequence2MovesMap);
     }
 
     private static class GameState {

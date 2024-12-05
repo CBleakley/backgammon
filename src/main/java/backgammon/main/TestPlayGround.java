@@ -11,21 +11,25 @@ import java.util.List;
 
 public class TestPlayGround {
     public static void main(String[] args) {
-//        Board board = new Board();
-//
-//        Checker blueChecker = new Checker(Color.BLUE);
-//        Checker redChecker1 = new Checker(Color.RED);
-//        Checker redChecker2 = new Checker(Color.RED);
-//
-//        board.getPoints().get(8).addChecker(blueChecker);
-//        board.getPoints().get(7).addChecker(redChecker1);
-//        board.getPoints().get(7).addChecker(redChecker2);
-//
-//        List<Integer> dice = new ArrayList<>();
-//        dice.add(1);
-//        dice.add(2);
-//
-//        List<List<Move>> moves = NewMoveGenerator.generateAllPossibleMoveSequences(board, dice, Color.BLUE);
+        Board board = new Board();
+
+        Checker blueChecker1 = new Checker(Color.BLUE);
+        Checker blueChecker2 = new Checker(Color.BLUE);
+        Checker blueChecker3 = new Checker(Color.BLUE);
+        Checker blueChecker4 = new Checker(Color.BLUE);
+
+        board.getPoints().get(8).addChecker(blueChecker1);
+        board.getPoints().get(8).addChecker(blueChecker2);
+        board.getPoints().get(10).addChecker(blueChecker3);
+        board.getPoints().get(10).addChecker(blueChecker4);
+
+        List<Integer> dice = new ArrayList<>();
+        dice.add(2);
+        dice.add(2);
+        dice.add(2);
+        dice.add(2);
+
+        List<List<Move>> moves = NewMoveGenerator.generateAllPossibleMoveSequences(board, dice, Color.BLUE);
 //        List<Move> sequence1 = new ArrayList<>();
 //        sequence1.add(new Move(3, 4, Color.BLUE));
 //        sequence1.add(new Move(7, 8, Color.BLUE));
