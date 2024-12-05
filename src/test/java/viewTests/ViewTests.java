@@ -143,6 +143,7 @@ class ViewTests {
     void testDisplayBoard() {
         // Arrange: Create real instances of required classes
         Board board = new Board(); // Default board setup
+        board.initialiseStartingPosition();
         DoubleDice doubleDice = new DoubleDice();
         doubleDice.setOwner(new Player( "Olivia", Color.BLUE)); // Set double dice owner
         doubleDice.updateMultiplier(); // Update multiplier to 2

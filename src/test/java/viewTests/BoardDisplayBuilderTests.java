@@ -19,6 +19,7 @@ class BoardDisplayBuilderTests {
     void testBuildBoardInitialBoard() {
         // Arrange: Create a new board with default setup
         Board board = new Board();
+        board.initialiseStartingPosition();
         DoubleDice doubleDice = new DoubleDice();
         List<Integer> rollToPlay = null; // No dice rolled yet
         Color colorToPlay = null; // No specific player's turn

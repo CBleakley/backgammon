@@ -14,6 +14,7 @@ class BoardTests {
     void testInitialisation() {
         // Create a new Board
         Board board = new Board();
+        board.initialiseStartingPosition();
         List<Point> points = board.getPoints();
 
         // Verify the number of points

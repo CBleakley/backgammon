@@ -32,7 +32,10 @@ public class Game {
 
     public Game(View view, Player player1, Player player2, Map<Player, Integer> matchScore, int matchLength) {
         this.view = view;
+
         this.board = new Board();
+        board.initialiseStartingPosition();
+
         this.dice = new DicePair();
         this.doubleDice = new DoubleDice();
 
