@@ -28,25 +28,25 @@ public class MoveTests {
     @Test
     void testToStringFromBarToOff() {
         Move move = new Move(-3, -1, Color.BLUE);
-        assertEquals("Move: Bar-Off", move.toString(), "toString should return 'Move: Bar-Off' for a move from Bar to Off");
+        assertEquals("Bar-Off", move.toString(), "toString should return 'Move: Bar-Off' for a move from Bar to Off");
     }
 
     @Test
     void testToStringRegularMoveBlue() {
         Move move = new Move(2, 5, Color.BLUE);
-        assertEquals("Move: 3-6", move.toString(), "toString should return 'Move: 3-6' for a BLUE player move");
+        assertEquals("3-6", move.toString(), "toString should return 'Move: 3-6' for a BLUE player move");
     }
 
     @Test
     void testToStringRegularMoveRed() {
         Move move = new Move(2, 5, Color.RED);
-        assertEquals("Move: 22-19", move.toString(), "toString should return 'Move: 22-19' for a RED player move");
+        assertEquals("22-19", move.toString(), "toString should return 'Move: 22-19' for a RED player move");
     }
 
     @Test
     void testToStringToOffBlue() {
         Move move = new Move(22, -1, Color.BLUE);
-        assertEquals("Move: 23-Off", move.toString(), "toString should return 'Move: 23-Off' for a BLUE player moving to Off");
+        assertEquals("23-Off", move.toString(), "toString should return 'Move: 23-Off' for a BLUE player moving to Off");
     }
 
     @Test

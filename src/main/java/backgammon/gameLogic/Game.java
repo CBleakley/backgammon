@@ -40,7 +40,6 @@ public class Game {
         this.view = view;
 
         this.board = new Board();
-        board.initialiseStartingPosition();
 
         this.dice = new DicePair();
         this.doubleDice = new DoubleDice();
@@ -55,6 +54,9 @@ public class Game {
     }
 
     public GameWinner play() {
+        //board.initialiseStartingPosition();
+        board.initialiseStartingPosition();
+
         makeInitialRolls();
         displayBoardWithRoll();
 
@@ -134,14 +136,14 @@ public class Game {
         // Generate possible moves
         List<List<Move>> possibleMoveSequences = MoveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.color());
 
-        if (possibleMoveSequences.isEmpty() || (possibleMoveSequences.size() == 1 && possibleMoveSequences.get(0).isEmpty())) { // Does the job to check if there are no possible moves
+        if (possibleMoveSequences.size() == 1 && possibleMoveSequences.getFirst().isEmpty()) { // Checks if there are no possible moves
             view.displayNoMovesAvailable(nextToPlay);
             nextRollToPlay.clear();
             return null;
         }
 
         if (possibleMoveSequences.size() == 1) {
-            List<Move> onlyPossibleMoves = possibleMoveSequences.get(0);
+            List<Move> onlyPossibleMoves = possibleMoveSequences.getFirst();
             view.displayOnlyOnePossibleMove(onlyPossibleMoves);
             for (Move move : onlyPossibleMoves) {
                 MoveExecutor.executeMove(board, move);
