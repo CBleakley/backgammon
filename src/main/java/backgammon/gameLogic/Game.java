@@ -2,15 +2,13 @@ package backgammon.gameLogic;
 
 import backgammon.Dice.DicePair;
 import backgammon.Dice.Die;
-import backgammon.Dice.DoubleDice;
-import backgammon.playerInput.*;
+import backgammon.PlayerInput.*;
 import backgammon.board.*;
 import backgammon.player.Player;
 import backgammon.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Game {
     private final View view;
@@ -25,42 +23,27 @@ public class Game {
 
     private boolean gameQuit = false;
 
-    private final Map<Player, Integer> matchScore;
-    private final int matchLength;
-
-    private final DoubleDice doubleDice;
-
-    public Game(View view, Player player1, Player player2, Map<Player, Integer> matchScore, int matchLength) {
+    public Game(View view, Player player1, Player player2) {
         this.view = view;
-
         this.board = new Board();
-
         this.dice = new DicePair();
-        this.doubleDice = new DoubleDice();
 
         this.player1 = player1;
         this.player2 = player2;
-
-        this.matchScore = matchScore;
-        this.matchLength = matchLength;
 
         this.nextRollToPlay = new ArrayList<>();
     }
 
     public GameWinner play() {
-        //board.initialiseStartingPosition();
-        board.initialiseStartingPosition();
-
         makeInitialRolls();
-        displayBoardWithRoll();
+        view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, calculatePipCount(nextToPlay.getColor()));
 
         do {
-            GameWinner gameWinner = turn();
-            if (gameWinner != null) {
-                return gameWinner;
-            }
+            turn();
+            GameWinner gameWinner = checkGameWon();
+            if (gameWinner != null) { return gameWinner; }
             passToNextPlayer();
-        } while (!gameQuit);
+        } while(!gameQuit);
 
         return null;
     }
@@ -76,75 +59,76 @@ public class Game {
             player2Roll = die.roll();
             view.displayInitialRoll(player2, player2Roll);
 
-            if (player1Roll == player2Roll) {
+            if(player1Roll == player2Roll) {
                 view.displayRollAgain();
             }
-        } while (player1Roll == player2Roll);
+        } while(player1Roll == player2Roll);
 
         nextToPlay = (player1Roll > player2Roll) ? player1 : player2;
 
-        view.displayWhoPlaysFirst(nextToPlay);
+        view.displayXPlaysFirst(nextToPlay);
         setNextRollToPlay(player1Roll, player2Roll);
+
     }
 
     private void setNextRollToPlay(int dice1, int dice2) {
         nextRollToPlay.clear();
 
-        if (dice1 == dice2) {
-            for (int i = 0; i < 4; i++) {
-                nextRollToPlay.add(dice1);
-            }
+        if(dice1 != dice2) {
+            nextRollToPlay.add(dice1);
+            nextRollToPlay.add(dice2);
             return;
         }
 
         nextRollToPlay.add(dice1);
-        nextRollToPlay.add(dice2);
+        nextRollToPlay.add(dice1);
+        nextRollToPlay.add(dice1);
+        nextRollToPlay.add(dice1);
     }
 
-    private GameWinner turn() {
+    private void turn() {
+        // Check if we need to roll, which should only happen after the first turn
         while (nextRollToPlay.isEmpty()) {
             PlayerInput playerInput = view.getPlayerInput(nextToPlay);
             if (playerInput instanceof QuitCommand) {
                 gameQuit = true;
-                return null;
-            } else if (playerInput instanceof TestCommand testCommand) {
-                handleTestCommand(testCommand);
-            } else if (playerInput instanceof RollCommand) {
+                return;
+            }
+
+            if (playerInput instanceof RollCommand) {
                 roll();
-                displayBoardWithRoll();
-            } else if (playerInput instanceof SetDiceCommand setDiceCommand) {
-                setNextRollToPlay(setDiceCommand.getDice1(), setDiceCommand.getDice2());
-                displayBoardWithRoll();
-            } else if (playerInput instanceof PipCommand) {
+                int pipCount = calculatePipCount(nextToPlay.getColor());
+                view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, pipCount);
+            }
+
+            if (playerInput instanceof PipCommand) {
                 displayPipCounts();
-            } else if (playerInput instanceof HintCommand) {
+            }
+
+            if (playerInput instanceof HintCommand) {
                 displayHint();
-            } else if (playerInput instanceof DoubleCommand) {
-                GameWinner gameWinner = offerDouble();
-                if (gameWinner != null) return gameWinner;
-            } else {
-                view.display("Invalid command. Please try again.");
             }
         }
 
-        // Generate possible moves
-        List<List<Move>> possibleMoveSequences = MoveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.color());
+        // Generate possible moves with the current dice values in nextRollToPlay
+        List<List<Move>> possibleMoveSequences = MoveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.getColor());
 
-        if (possibleMoveSequences.size() == 1 && possibleMoveSequences.getFirst().isEmpty()) { // Checks if there are no possible moves
+        if (possibleMoveSequences.isEmpty()) {
             view.displayNoMovesAvailable(nextToPlay);
             nextRollToPlay.clear();
-            return null;
+            return;
         }
 
+        // TODO: this is falsely triggering when there are no possible moves
         if (possibleMoveSequences.size() == 1) {
             List<Move> onlyPossibleMoves = possibleMoveSequences.getFirst();
             view.displayOnlyOnePossibleMove(onlyPossibleMoves);
             for (Move move : onlyPossibleMoves) {
                 MoveExecutor.executeMove(board, move);
             }
-            displayBoardNoRoll();
+            view.displayBoard(board.cloneBoard());
             nextRollToPlay.clear();
-            return GameWinChecker.checkGameWon(board.cloneBoard(), doubleDice, player1, player2);
+            return;
         }
 
         view.displayPossibleMoves(possibleMoveSequences);
@@ -153,21 +137,31 @@ public class Game {
         int selectedOption = view.promptMoveSelection(possibleMoveSequences.size());
 
         List<Move> selectedMoves = possibleMoveSequences.get(selectedOption);
-        for (Move move : selectedMoves) {
+        for (Move move : selectedMoves) {   // Apply the selected moves to the actual game board
             MoveExecutor.executeMove(board, move);
         }
 
-        displayBoardNoRoll();
+        view.displayBoard(board.cloneBoard());
 
         nextRollToPlay.clear();
-        return GameWinChecker.checkGameWon(board.cloneBoard(), doubleDice, player1, player2);
     }
 
-    private void handleTestCommand(TestCommand testCommand) {
-        String filename = testCommand.getFilename();
-        view.setInputSource(filename); // Pass the filename directly
-    }
+    private GameWinner checkGameWon() {
+        int numberOfCheckersOffToWin = Board.NUMBER_OF_CHECKERS_PER_PLAYER;
 
+        Board boardClone = board.cloneBoard();
+        Off off = boardClone.getOff();
+        // TODO: Sprint 3: number of points won depends on double dice, gammon, backgammon
+        if (off.getOffOfColor(player1.getColor()).size() == numberOfCheckersOffToWin) {
+            return new GameWinner(player1, 1);
+        }
+
+        if (off.getOffOfColor((player2.getColor())).size() == numberOfCheckersOffToWin) {
+            return new GameWinner(player2, 1);
+        }
+
+        return null;
+    }
 
     private int calculatePipCount(Color color) {
         return PipCounter.calculatePipCount(board, color);
@@ -181,26 +175,7 @@ public class Game {
     }
 
     private void displayHint() {
-        Player doubleDiceOwner = doubleDice.getOwner();
-        view.displayHint(doubleDiceOwner == null || doubleDiceOwner == nextToPlay);
-    }
-
-    private GameWinner offerDouble() {
-        if (doubleDice.getOwner() != null && nextToPlay != doubleDice.getOwner()) {
-            view.cannotOfferDouble(doubleDice.getOwner());
-            return null;
-        }
-
-        Player offerRecipient = (nextToPlay == player1) ? player2 : player1;
-        boolean accepted = view.getDoubleDecision(offerRecipient);
-
-        if (accepted) {
-            doubleDice.updateMultiplier();
-            doubleDice.setOwner(offerRecipient);
-            return null;
-        }
-
-        return new GameWinner(nextToPlay, doubleDice.getMultiplier(), EndingType.DOUBLE_REFUSED);
+        view.displayHint();
     }
 
     private void passToNextPlayer() {
@@ -209,17 +184,7 @@ public class Game {
 
     private void roll() {
         List<Integer> diceFaceValue = dice.roll();
-        setNextRollToPlay(diceFaceValue.get(0), diceFaceValue.get(1));
-    }
-
-    private void displayBoardNoRoll() {
-        view.displayBoard(board.cloneBoard(), null, null, null, player1, matchScore.get(player1),
-                player2, matchScore.get(player2), matchLength, doubleDice);
-    }
-
-    private void displayBoardWithRoll() {
-        int pipCount = calculatePipCount(nextToPlay.color());
-        view.displayBoard(board.cloneBoard(), nextRollToPlay, nextToPlay, pipCount, player1, matchScore.get(player1),
-                player2, matchScore.get(player2), matchLength, doubleDice);
+        setNextRollToPlay(diceFaceValue.getFirst(), diceFaceValue.getLast());
+        view.displayRoll(nextRollToPlay);
     }
 }

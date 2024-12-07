@@ -4,22 +4,14 @@ import backgammon.player.Player;
 
 public class GameWinner {
     private final Player winner;
-    private final int doubleValue;
-    private final EndingType endingType;
+    private final int pointsWon;
 
-    public GameWinner(Player winner, int pointsWon, EndingType endingType) {
+    public GameWinner(Player winner, int pointsWon) {
         this.winner = winner;
-        this.doubleValue = pointsWon;
-        this.endingType = endingType;
+        this.pointsWon = pointsWon;
     }
 
     public Player getWinner() { return winner; }
 
-    public int getPointsWon() {
-        return doubleValue * endingType.getMultiplier();
-    }
-
-    public EndingType getEndingType() {
-        return endingType;
-    }
+    public int getPointsWon() { return pointsWon; }
 }

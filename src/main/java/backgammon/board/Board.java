@@ -18,6 +18,8 @@ public class Board {
             this.points.add(new Point());
         }
 
+        initialiseStartingPosition();
+
         this.bar = new Bar();
         this.off = new Off();
     }
@@ -51,7 +53,7 @@ public class Board {
         return new Board(clonedPoints, clonedBar, clonedOff);
     }
 
-    public void initialiseStartingPosition() {
+    private void initialiseStartingPosition() {
         // Black checkers
         this.points.get(0).addChecker(new Checker(Color.RED));  // 2 checkers on point 1
         this.points.get(0).addChecker(new Checker(Color.RED));

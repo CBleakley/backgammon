@@ -6,13 +6,11 @@ public class Move {
     private final int fromPoint;
     private final int toPoint;
     private final Color playerColor;
-    private final int diceUsed;
 
-    public Move(int fromPoint, int toPoint, Color playerColor, int diceUsed) {
+    public Move(int fromPoint, int toPoint, Color playerColor) {
         this.fromPoint = fromPoint;
         this.toPoint = toPoint;
         this.playerColor = playerColor;
-        this.diceUsed = diceUsed;
     }
 
     public int getFromPoint() {
@@ -26,8 +24,6 @@ public class Move {
     public Color getPlayerColor() {
         return playerColor;
     }
-
-    public int getDiceUsed() { return diceUsed; }
 
     @Override
     public String toString() {
@@ -45,7 +41,7 @@ public class Move {
             to = (playerColor == Color.BLUE) ? String.valueOf(toPoint + 1) : String.valueOf(24 - toPoint);
         }
 
-        return from + "-" + to;
+        return "Move: " + from + "-" + to;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package backgammon.playerInput;
+package backgammon.PlayerInput;
 
 public class QuitCommand implements PlayerInput {
 
