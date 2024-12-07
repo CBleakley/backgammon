@@ -1,3 +1,9 @@
+/*****************************************
+ * Team 20
+ * Alexander Kelly - 21359703 - lethalhedgehog (GitHub)
+ * Conor Bleakley - 21411422 - CBleakley (GitHub)
+ *****************************************/
+
 package backgammon.gameLogic;
 
 import backgammon.board.Color;
@@ -8,17 +14,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Match {
-    private final View view;
+    final View view;
 
-    private int winThreshold;
+    int winThreshold;
 
-    private Player player1;
-    private Player player2;
+    Player player1;
+    Player player2;
 
-    private Map<Player, Integer> matchScore;
+    Map<Player, Integer> matchScore;
 
-    private Player matchWinner;
-    private boolean matchOver = false;
+    Player matchWinner;
+    boolean matchOver = false;
 
     public Match(View view) {
         this.view = view;
@@ -57,7 +63,7 @@ public class Match {
         } while (!matchOver);
     }
 
-    private void updateMatchScore(GameWinner gameWinner) {
+    void updateMatchScore(GameWinner gameWinner) {
         if (gameWinner == null) {
             matchWinner = null;
             matchOver = true;
@@ -74,7 +80,7 @@ public class Match {
         }
     }
 
-    private void displayEndMatchMessage() {
+    void displayEndMatchMessage() {
         if (matchWinner == null) {
             view.displayMatchQuitMessage();
             return;
@@ -82,13 +88,13 @@ public class Match {
         view.displayMatchWinMessage(matchWinner);
     }
 
-    private void resetMatch() {
+    void resetMatch() {
         setupMatch();
         matchOver = false;
         matchWinner = null;
     }
 
-    private void displayGameResult(GameWinner gameWinner) {
+    void displayGameResult(GameWinner gameWinner) {
         switch (gameWinner.getEndingType()) {
             case SINGLE -> view.displaySingleWin();
             case DOUBLE_REFUSED -> view.displayDoubleRefused();

@@ -1,3 +1,9 @@
+/*****************************************
+ * Team 20
+ * Alexander Kelly - 21359703 - lethalhedgehog (GitHub)
+ * Conor Bleakley - 21411422 - CBleakley (GitHub)
+ *****************************************/
+
 package backgammon.view;
 
 class Messages {
@@ -52,9 +58,11 @@ class Messages {
     static final String HINT =
             """
              The following commands are available:
-                "quit"
-                "roll"
-                "pip"
+                "quit" - quits the game
+                "roll" - rolls the dice
+                "pip" - returns the current player's pip count
+                "double" - offer a double to the other player, who can accept or reject the proposal
+                "hint" - ask for all possible commands
                 """;
     static final String HINT_WITH_DOUBLE = HINT + "   \"hint\"\n";
 }

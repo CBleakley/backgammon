@@ -1,3 +1,9 @@
+/*****************************************
+ * Team 20
+ * Alexander Kelly - 21359703 - lethalhedgehog (GitHub)
+ * Conor Bleakley - 21411422 - CBleakley (GitHub)
+ *****************************************/
+
 package backgammon.gameLogic;
 
 import backgammon.board.Board;
@@ -6,7 +12,17 @@ import backgammon.board.Point;
 
 import java.util.*;
 
+/**
+ * The {@code MoveGenerator} class generates all possible move sequences
+ * for a player in a Backgammon game based on the current board state, available dice values,
+ * and the player's color.
+ * <p>
+ * It uses a breadth-first search (BFS) algorithm to find all possible moves,
+ * ensuring that the maximum number of moves are found.
+ * </p>
+ */
 public class MoveGenerator {
+
     public static List<List<Move>> generateAllPossibleMoveSequences(Board board, List<Integer> diceValues, Color playerColor) {
         GameState initialGameState = new GameState(board, diceValues, new ArrayList<>());
         List<List<Move>> foundMoves = searchForMoves(initialGameState, playerColor);
@@ -262,11 +278,22 @@ public class MoveGenerator {
         return sequence1MovesMap.equals(sequence2MovesMap);
     }
 
-    private static class GameState {
+    /**
+     * Represents the state of the game at a particular point in the move generation process.
+     * It includes the current board state, remaining dice values, and the sequence of moves made.
+     */
+    static class GameState {
         public Board board;
         public List<Integer> remainingDice;
         public List<Move> moveSequence;
 
+        /**
+         * Constructs a new {@code GameState}.
+         *
+         * @param board         the current state of the game board
+         * @param remainingDice the list of remaining dice values
+         * @param moveSequence  the sequence of moves made to reach this state
+         */
         public GameState(Board board, List<Integer> remainingDice, List<Move> moveSequence) {
             this.board = board;
             this.remainingDice = remainingDice;
