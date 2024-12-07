@@ -3,7 +3,7 @@ package backgammon.playerInput;
 public class TestCommand implements PlayerInput {
     private final String filename;
 
-    private TestCommand(String filename) {
+    public TestCommand(String filename) {
         this.filename = filename;
     }
 
@@ -13,8 +13,8 @@ public class TestCommand implements PlayerInput {
 
     public static TestCommand parse(String input) {
         if (input == null) return null;
-        if (input.startsWith("test ")) {
-            String filename = input.substring(5).trim();
+        if (input.startsWith("test")) {
+            String filename = input.substring(4).trim();
             if (!filename.isEmpty()) {
                 return new TestCommand(filename);
             }

@@ -272,7 +272,7 @@ public class MoveGenerator {
         }
     }
 
-    private static class GameState {
+    static class GameState {
         public Board board;
         public List<Integer> remainingDice;
         public List<Move> moveSequence;
