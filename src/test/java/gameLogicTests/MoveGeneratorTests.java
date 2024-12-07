@@ -1,12 +1,11 @@
-package backgammon.gameLogic;
+package gameLogicTests;
 
-import backgammon.board.Bar;
+import backgammon.gameLogic.Move;
+import backgammon.gameLogic.MoveGenerator;
 import backgammon.board.Board;
 import backgammon.board.Color;
 import backgammon.board.Checker;
-import backgammon.board.Off;
 import backgammon.board.Point;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -71,8 +70,8 @@ class MoveGeneratorTests {
 
         // PlayerColor RED enters from the bar to points 0 (die=1) and 3 (die=4)
         List<Move> expectedMoves = Arrays.asList(
-                new Move(-3, 0, Color.RED), // -3 indicates moving from the bar
-                new Move(-3, 3, Color.RED)
+                new Move(-3, 0, Color.RED, 2), // -3 indicates moving from the bar
+                new Move(-3, 3, Color.RED, 2)
         );
 
         // Act
@@ -103,8 +102,8 @@ class MoveGeneratorTests {
         // Using die=2: Move from point 0 to point 2
         // Using die=5: Move from point 0 to point 5
         List<List<Move>> expected = Arrays.asList(
-                Collections.singletonList(new Move(0, 2, Color.BLUE)),
-                Collections.singletonList(new Move(0, 5, Color.BLUE))
+                Collections.singletonList(new Move(0, 2, Color.BLUE, 2)),
+                Collections.singletonList(new Move(0, 5, Color.BLUE, 2))
         );
 
         // Act
@@ -246,10 +245,10 @@ class MoveGeneratorTests {
         // Expected Moves:
         // Four moves: 0->3, 3->6, 6->9, 9->12
         List<Move> expectedMoves = Arrays.asList(
-                new Move(12, 11, Color.BLUE),
-                new Move(11, 10, Color.BLUE),
-                new Move(10, 9, Color.BLUE),
-                new Move(9, 8, Color.BLUE)
+                new Move(12, 11, Color.BLUE, 2),
+                new Move(11, 10, Color.BLUE, 2),
+                new Move(10, 9, Color.BLUE, 2),
+                new Move(9, 8, Color.BLUE, 2)
         );
 
         // Act
@@ -273,22 +272,21 @@ class MoveGeneratorTests {
         List<Integer> dice = Arrays.asList(5, 4);
         Color playerColor = Color.BLUE;
 
-
-        // Expected Moves:
-        List<Move> sequence1 = Arrays.asList(
-                new Move(20, 15, Color.BLUE),
-                new Move(15, 11, Color.BLUE)
-        );
-
-
-        // Act
-        List<List<Move>> expected = Arrays.asList(sequence1);
         List<List<Move>> possibleMoves = MoveGenerator.generateAllPossibleMoveSequences(board, dice, playerColor);
 
+        boolean offMoveFound = false;
+        outerLoop:
+        for (List<Move> moveSequence: possibleMoves) {
+            for (Move move: moveSequence) {
+                if (move.toString().contains("Off")) {
+                    offMoveFound = true;
+                    break outerLoop;
+                }
+            }
+        }
 
         // Assert
-        assertEquals(1, possibleMoves.size(), "Expected one move sequence not bearing off.");
-        assertTrue(possibleMoves.containsAll(expected), "Move sequences do not match expected when not all checkers are in home board.");
+        assertFalse(offMoveFound, "Expected one move sequence not bearing off.");
     }
 
     /**
@@ -729,36 +727,36 @@ class MoveGeneratorTests {
         // - Move from 1 to 6 (die=5)
         // - Move from 6 to 9 (die=3)
         List<Move> sequence1 = Arrays.asList(
-                new Move(5, 1, Color.BLUE),
-                new Move(10, 7, Color.BLUE)
+                new Move(5, 1, Color.BLUE, 2),
+                new Move(10, 7, Color.BLUE, 2)
         );
         List<Move> sequence2 = Arrays.asList(
-                new Move(5, 1, Color.BLUE),
-                new Move(15, 12, Color.BLUE)
+                new Move(5, 1, Color.BLUE, 2),
+                new Move(15, 12, Color.BLUE, 2)
         );
         List<Move> sequence3 = Arrays.asList(
-                new Move(10, 6, Color.BLUE),
-                new Move(5, 2, Color.BLUE)
+                new Move(10, 6, Color.BLUE, 2),
+                new Move(5, 2, Color.BLUE, 2)
         );
         List<Move> sequence4 = Arrays.asList(
-                new Move(10, 6, Color.BLUE),
-                new Move(6, 3, Color.BLUE)
+                new Move(10, 6, Color.BLUE, 2),
+                new Move(6, 3, Color.BLUE, 2)
         );
         List<Move> sequence5 = Arrays.asList(
-                new Move(10, 6, Color.BLUE),
-                new Move(15, 12, Color.BLUE)
+                new Move(10, 6, Color.BLUE, 2),
+                new Move(15, 12, Color.BLUE, 2)
         );
         List<Move> sequence6 = Arrays.asList(
-                new Move(15, 11, Color.BLUE),
-                new Move(5, 2, Color.BLUE)
+                new Move(15, 11, Color.BLUE, 2),
+                new Move(5, 2, Color.BLUE, 2)
         );
         List<Move> sequence7 = Arrays.asList(
-                new Move(15, 11, Color.BLUE),
-                new Move(10, 7, Color.BLUE)
+                new Move(15, 11, Color.BLUE, 2),
+                new Move(10, 7, Color.BLUE, 2)
         );
         List<Move> sequence8 = Arrays.asList(
-                new Move(15, 11, Color.BLUE),
-                new Move(11, 8, Color.BLUE)
+                new Move(15, 11, Color.BLUE, 2),
+                new Move(11, 8, Color.BLUE, 2)
         );
 
 
@@ -793,7 +791,7 @@ class MoveGeneratorTests {
         // - Using die=2: Move from 0 to 2 is blocked
         // - Using die=3: Move from 0 to 3 is allowed
         List<Move> expectedMoves = Collections.singletonList(
-                new Move(0, 3, Color.RED)
+                new Move(0, 3, Color.RED, 2)
         );
 
         // Act

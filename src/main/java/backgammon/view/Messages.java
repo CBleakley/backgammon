@@ -62,7 +62,6 @@ class Messages {
                 "roll" - rolls the dice
                 "pip" - returns the current player's pip count
                 "double" - offer a double to the other player, who can accept or reject the proposal
-                "hint" - ask for all possible commands
                 """;
     static final String HINT_WITH_DOUBLE = HINT + "   \"hint\"\n";
 }

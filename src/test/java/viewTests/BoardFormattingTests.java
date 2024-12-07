@@ -1,10 +1,11 @@
-package backgammon.view;
+package viewTests;
 
+import backgammon.view.BoardFormatting;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BoardFormattingTest {
+class BoardFormattingTests {
 
     @Test
     void should_HaveCorrectDoubleDiceFormat() {

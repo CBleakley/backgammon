@@ -345,13 +345,13 @@ class ViewTests {
         view.displayHint(true);
 
         String output = outputStream.toString();
-        assertTrue(output.contains(            """
+        assertTrue(output.contains( """
              The following commands are available:
-                "quit"
-                "roll"
-                "pip"
-                "hint"
-                """), "Output should contain the hint with double available message");
+                "quit" - quits the game
+                "roll" - rolls the dice
+                "pip" - returns the current player's pip count
+                "double" - offer a double to the other player, who can accept or reject the proposal
+             """), "Output should contain the hint with double available message");
     }
 
     @Test
@@ -360,12 +360,12 @@ class ViewTests {
         view.displayHint(false);
 
         String output = outputStream.toString();
-        assertTrue(output.contains(            """
+        assertTrue(output.contains( """
              The following commands are available:
-                "quit"
-                "roll"
-                "pip"
-                """), "Output should contain the basic hint message");
+                "quit" - quits the game
+                "roll" - rolls the dice
+                "pip" - returns the current player's pip count
+             """), "Output should contain the basic hint message");
     }
 
     @Test
@@ -373,8 +373,8 @@ class ViewTests {
         View view = new View();
 
         List<List<Move>> possibleMoves = List.of(
-                List.of(new Move(1, 2, Color.BLUE), new Move(5, 6, Color.BLUE)),
-                List.of(new Move( 7, 9, Color.BLUE))
+                List.of(new Move(1, 2, Color.BLUE, 2), new Move(5, 6, Color.BLUE, 2)),
+                List.of(new Move( 7, 9, Color.BLUE, 2))
         );
         view.displayPossibleMoves(possibleMoves);
 
@@ -402,7 +402,7 @@ class ViewTests {
     @Test
     void testDisplayOnlyOnePossibleMove() {
         View view = new View();
-        List<Move> moves = List.of(new Move(1, 2, Color.BLUE));
+        List<Move> moves = List.of(new Move(1, 2, Color.BLUE, 2));
         view.displayOnlyOnePossibleMove(moves);
 
         String output = outputStream.toString();

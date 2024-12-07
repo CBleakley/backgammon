@@ -147,16 +147,4 @@ class MessagesTest {
         String expected = "Option %s:";
         assertEquals(expected, Messages.MOVE_OPTION_TITLE, "MOVE_OPTION_TITLE format should match");
     }
-
-    @Test
-    void should_HaveCorrectHintMessage() {
-        String expected = """
-                 The following commands are available:
-                    "quit"
-                    "roll"
-                    "pip"
-                    """;
-        assertEquals(expected, Messages.HINT, "HINT should match");
-    }
-
 }
