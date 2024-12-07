@@ -169,7 +169,6 @@ class GameTests {
         // Verify that hints were displayed
         List<String> messages = stubView.getDisplayedMessages();
         // Assuming that displayHint adds a specific message
-        // Modify based on your actual implementation
         assertTrue(messages.stream().anyMatch(msg -> msg.contains("Displaying board state.")));
     }
 
@@ -335,7 +334,6 @@ class GameTests {
                                  Player player2, int score2, int matchLength,
                                  DoubleDice doubleDice) {
             displayedMessages.add("Displaying board state.");
-            // Additional logic to capture board state can be added here if necessary
         }
 
         @Override
@@ -385,7 +383,6 @@ class GameTests {
         @Override
         public void setInputSource(String filename) {
             displayedMessages.add("Setting input source to: " + filename);
-            // In a real test, you might parse a file or set up additional inputs
         }
 
         public List<String> getDisplayedMessages() {

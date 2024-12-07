@@ -30,7 +30,6 @@ class GameWinCheckerTests {
         player1 = new Player("Alice", Color.BLUE);
         player2 = new Player("Bob", Color.RED);
         doubleDice = new DoubleDice();
-        // Assuming DoubleDice default multiplier is 1
     }
 
     /**
@@ -261,11 +260,9 @@ class GameWinCheckerTests {
 
         Board board = createBoard(offPlayer1, offPlayer2, barPlayer1, barPlayer2, pointCheckers);
 
-        // Depending on implementation, this could be invalid. Here, we assume Player1 is declared first.
         GameWinner winner = GameWinChecker.checkGameWon(board, doubleDice, player1, player2);
 
         assertNotNull(winner);
-        // Depending on business rules, this could be handled differently
         // For this test, we'll assume Player1 is declared the winner if both have all checkers off
         assertEquals(player1, winner.getWinner());
         assertEquals(EndingType.SINGLE, winner.getEndingType());

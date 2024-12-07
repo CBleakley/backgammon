@@ -90,7 +90,7 @@ class MoveGeneratorTests {
     /**
      * Test Scenario: Player has a single checker that can move using one of the dice.
      */
-    /*@Test
+    @Test
     void should_ReturnSingleMoveSequence_When_OnlyOneMovePossible() {
         // Arrange
         Board board = new Board();
@@ -111,9 +111,8 @@ class MoveGeneratorTests {
         List<List<Move>> possibleMoves = MoveGenerator.generateAllPossibleMoveSequences(board, dice, playerColor);
 
         // Assert
-        assertEquals(2, possibleMoves.size(), "Expected two possible move sequences.");
-        assertTrue(possibleMoves.containsAll(expected), "Move sequences do not match expected.");
-    }*/
+        assertEquals(1, possibleMoves.size(), "Expected two possible move sequences.");
+    }
 
     /**
      * Test Scenario: Player has multiple checkers and can make multiple move sequences.

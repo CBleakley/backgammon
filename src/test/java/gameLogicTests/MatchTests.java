@@ -30,7 +30,6 @@ class MatchTests {
         match.winThreshold = 5;
     }
 
-    // Existing Tests...
 
     @Test
     void should_UpdateScoreAndDeclareWinner_When_PlayerReachesWinThreshold() {
@@ -232,7 +231,6 @@ class MatchTests {
     }
 
 
-
     /**
      * New Test: Verify that setupMatch retrieves player names correctly from View.
      */
@@ -256,14 +254,9 @@ class MatchTests {
         view.setPlayerNames(Map.of(Color.BLUE, "Eve", Color.RED, "Eve"));
         match.resetMatch();
 
-        // Depending on your implementation, this might be allowed or handled specially
         // For example, ensure that both players have the same name
         assertEquals("Eve", match.player1.name());
         assertEquals("Eve", match.player2.name());
-
-        // Alternatively, if your implementation prevents duplicates, verify the behavior
-        // For example, assert that an error message is displayed
-        // assertTrue(view.getDisplayedMessages().contains("Duplicate player names are not allowed."));
     }
 
     /**
