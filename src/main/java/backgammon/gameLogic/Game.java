@@ -48,6 +48,7 @@ public class Game {
     }
 
     public GameWinner play() {
+        //board.initialiseStartingPosition();
         board.initialiseStartingPosition();
 
         makeInitialRolls();
@@ -127,16 +128,16 @@ public class Game {
         }
 
         // Generate possible moves
-        List<List<Move>> possibleMoveSequences = NewMoveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.color());
+        List<List<Move>> possibleMoveSequences = MoveGenerator.generateAllPossibleMoveSequences(board, nextRollToPlay, nextToPlay.color());
 
-        if (possibleMoveSequences.isEmpty() || (possibleMoveSequences.size() == 1 && possibleMoveSequences.get(0).isEmpty())) { // Checks if there are no possible moves
+        if (possibleMoveSequences.size() == 1 && possibleMoveSequences.getFirst().isEmpty()) { // Checks if there are no possible moves
             view.displayNoMovesAvailable(nextToPlay);
             nextRollToPlay.clear();
             return null;
         }
 
         if (possibleMoveSequences.size() == 1) {
-            List<Move> onlyPossibleMoves = possibleMoveSequences.get(0);
+            List<Move> onlyPossibleMoves = possibleMoveSequences.getFirst();
             view.displayOnlyOnePossibleMove(onlyPossibleMoves);
             for (Move move : onlyPossibleMoves) {
                 MoveExecutor.executeMove(board, move);
