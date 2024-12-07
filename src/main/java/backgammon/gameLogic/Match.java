@@ -15,12 +15,12 @@ public class Match {
     private Player player1;
     private Player player2;
 
-    private HashMap<Player, Integer> matchScore;
+    private Map<Player, Integer> matchScore;
 
     private Player matchWinner;
     private boolean matchOver = false;
 
-    public Match (View view) {
+    public Match(View view) {
         this.view = view;
         setupMatch();
     }
@@ -39,12 +39,22 @@ public class Match {
 
     public void start() {
         do {
-            Game game = new Game(view, player1, player2);
+            Game game = new Game(view, player1, player2, matchScore, winThreshold);
             GameWinner gameWinner = game.play();
             updateMatchScore(gameWinner);
-        } while (!matchOver);
 
-        displayEndMatchMessage();
+            if (matchOver) {
+                displayEndMatchMessage();
+                if (view.promptStartNewMatch()) {
+                    resetMatch();
+                } else {
+                    break;
+                }
+            } else {
+                displayGameResult(gameWinner);
+            }
+
+        } while (!matchOver);
     }
 
     private void updateMatchScore(GameWinner gameWinner) {
@@ -70,5 +80,22 @@ public class Match {
             return;
         }
         view.displayMatchWinMessage(matchWinner);
+    }
+
+    private void resetMatch() {
+        setupMatch();
+        matchOver = false;
+        matchWinner = null;
+    }
+
+    private void displayGameResult(GameWinner gameWinner) {
+        switch (gameWinner.getEndingType()) {
+            case SINGLE -> view.displaySingleWin();
+            case DOUBLE_REFUSED -> view.displayDoubleRefused();
+            case GAMMON -> view.displayGammonWin();
+            case BACKGAMMON -> view.displayBackgammonWin();
+        }
+
+        view.displayGameResult(gameWinner.getWinner(), gameWinner.getPointsWon());
     }
 }
