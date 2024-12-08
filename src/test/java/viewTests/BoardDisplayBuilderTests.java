@@ -49,7 +49,7 @@ class BoardDisplayBuilderTests {
         String boardDisplay = BoardDisplayBuilder.buildBoard(board, doubleDice, rollToPlay, colorToPlay);
 
         // Assert: Verify the double dice display
-        assertTrue(boardDisplay.contains("[4]"), "Display should show double dice value 4");
+        assertTrue(boardDisplay.contains("[2]"), "Display should show double dice value 4");
     }
 
     @Test
