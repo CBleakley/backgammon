@@ -1,4 +1,4 @@
-package viewTests;
+package backgammon.view;
 
 import backgammon.view.BoardFormatting;
 import org.junit.jupiter.api.Test;

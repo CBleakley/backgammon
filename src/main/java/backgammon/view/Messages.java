@@ -64,4 +64,6 @@ class Messages {
                 """;
     static final String DOUBLE = "   \"double\" - offer a double to the other player, who can accept or reject the proposal";
     static final String HINT_WITH_DOUBLE = HINT + DOUBLE + "\n";
+
+    Messages() {}
 }

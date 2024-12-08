@@ -1,12 +1,13 @@
 package backgammon.view;
 
-import backgammon.board.Color;
-import backgammon.player.Player;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MessagesTest {
+class MessagesTests {
+
+    @Test
+    void messagesTest() { new Messages(); }
 
     @Test
     void should_HaveCorrectWelcomeMessage() {

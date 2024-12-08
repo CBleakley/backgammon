@@ -10,4 +10,6 @@ public class ColorANSICodes {
     static final String RED = "\033[31m";
     static final String BLUE = "\033[34m";
     static final String RESET = "\033[0m";
+
+    ColorANSICodes() {}
 }
