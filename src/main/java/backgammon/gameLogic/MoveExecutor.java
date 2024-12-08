@@ -45,7 +45,7 @@ public class MoveExecutor {
         Checker movingChecker;
 
         // If the move is from the bar, take the checker from the bar
-        if (fromPointIndex == -3) {  // Using -3 as a flag for moves from the bar
+        if (fromPointIndex == Board.BAR_FLAG) {  // Using -3 as a flag for moves from the bar
             if (board.getBar().getBarOfColor(playerColor).isEmpty()) {
                 System.out.println("Error: No checker available in bar for player color " + playerColor);
                 return;
@@ -64,7 +64,7 @@ public class MoveExecutor {
         }
 
         // Bearing off logic
-        if (toPointIndex == -1 || toPointIndex == -2) {
+        if (toPointIndex == Board.BLUE_OFF_FLAG || toPointIndex == Board.RED_OFF_FLAG) {
             board.getOff().addChecker(movingChecker);
             return;
         }

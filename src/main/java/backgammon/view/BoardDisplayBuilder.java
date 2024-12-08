@@ -14,8 +14,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Utility class for building a string representation of the backgammon board.
+ * This class formats the board for display, including points, checkers, bar, off areas, dice rolls, and the doubling dice.
+ */
 public class BoardDisplayBuilder {
 
+    /**
+     * Builds a string representation of the backgammon board.
+     *
+     * @param board        the current state of the game board
+     * @param doubleDice   the doubling die used in the game
+     * @param rollToPlay   the dice rolls available for the current turn (or {@code null} if no rolls are present)
+     * @param colorToPlay  the color of the player currently taking their turn
+     * @return a string representation of the board
+     */
     static public String buildBoard(Board board, DoubleDice doubleDice, List<Integer> rollToPlay, Color colorToPlay) {
         List<Stack<Checker>> checkersOnPoints = getCheckersOnPoints(board.getPoints());
         Player doubleDiceOwner = doubleDice.getOwner();
@@ -138,6 +151,12 @@ public class BoardDisplayBuilder {
         return displayBoard.toString();
     }
 
+    /**
+     * Retrieves the string representation of a checker for display.
+     *
+     * @param checker the checker whose display string is needed
+     * @return a string representing the checker (color-specific format)
+     */
     static private String getCheckerDisplayString(Checker checker) {
         return switch (checker.getColor()) {
             case BLUE -> BoardFormatting.BLUE_CHECKER;
@@ -145,6 +164,14 @@ public class BoardDisplayBuilder {
         };
     }
 
+    /**
+     * Finds the maximum size of the stacks of checkers within a specified range of points.
+     *
+     * @param listOfLists a list of checker stacks corresponding to points on the board
+     * @param startIndex  the starting index of the range
+     * @param endIndex    the ending index of the range
+     * @return the maximum size of the stacks in the specified range
+     */
     static private int getMaxSizeInRange(List<Stack<Checker>> listOfLists, int startIndex, int endIndex) {
         int maxSize = 0;
 
@@ -158,6 +185,12 @@ public class BoardDisplayBuilder {
         return maxSize;
     }
 
+    /**
+     * Retrieves a list of stacks of checkers from the points on the board.
+     *
+     * @param points the list of points on the board
+     * @return a list of stacks, where each stack contains the checkers on a point
+     */
     static private List<Stack<Checker>> getCheckersOnPoints(List<Point> points) {
         List<Stack<Checker>> checkersOnPoints = new ArrayList<>();
         for (Point point : points) {

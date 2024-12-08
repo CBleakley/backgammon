@@ -18,14 +18,29 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Handles user interaction in the Backgammon game.
+ * Provides methods to display messages, retrieve input, and manage input sources.
+ */
 public class View {
     private Scanner scanner = new Scanner(System.in);
     private BufferedReader fileReader = null;
 
+    /**
+     * Displays a message to the console.
+     *
+     * @param message the message to display
+     */
     public void display(String message) {
         System.out.println(message);
     }
 
+    /**
+     * Retrieves user input from the current input source (console or file).
+     * If the input source is a file and EOF is reached, switches back to console input.
+     *
+     * @return the user input as a string
+     */
     public String getInput() {
         try {
             if (fileReader != null) {
@@ -44,6 +59,11 @@ public class View {
         return scanner.nextLine();
     }
 
+    /**
+     * Sets the input source for user commands to either console or a file.
+     *
+     * @param filename the name of the file to use as input, or {@code null} to reset to console input
+     */
     public void setInputSource(String filename) {
         if (filename == null) {
             // Reset to console input
@@ -62,7 +82,9 @@ public class View {
         }
     }
 
-
+    /**
+     * Closes the file reader if it is open and resets input to the console.
+     */
     private void closeFileReader() {
         if (fileReader != null) {
             try {
@@ -74,32 +96,66 @@ public class View {
         }
     }
 
+    /**
+     * Displays the welcome message for the game.
+     */
     public void displayWelcomeMessage() {
         display(Messages.WELCOME_MESSAGE);
     }
 
+    /**
+     * Displays the message for quitting a match.
+     */
     public void displayMatchQuitMessage() { display(Messages.MATCH_QUIT); }
 
+    /**
+     * Displays the message for a player winning the match.
+     *
+     * @param winner the player who won the match
+     */
     public void displayMatchWinMessage(Player winner) {
         String colorCode = getColorANSI(winner.color());
         String name = winner.name();
         display(String.format(Messages.MATCH_WIN, colorCode, name));
     }
 
+    /**
+     * Displays a message indicating that the game ended in a Single.
+     */
     public void displaySingleWin() { display(Messages.SINGLE_WIN); }
 
+    /**
+     * Displays a message indicating that the game ended because the double was refused.
+     */
     public void displayDoubleRefused() { display(Messages.DOUBLE_REFUSED); }
 
+    /**
+     * Displays a message indicating that the game ended in a Gammon.
+     */
     public void displayGammonWin() { display(Messages.GAMMON_WIN); }
 
+    /**
+     * Displays a message indicating that the game ended in a Backgammon.
+     */
     public void displayBackgammonWin() { display(Messages.BACKGAMMON_WIN); }
 
+    /**
+     * Displays the result of a game, including the winner and points won.
+     *
+     * @param winner    the player who won the game
+     * @param pointsWon the number of points won
+     */
     public void displayGameResult(Player winner, int pointsWon) {
         display(String.format(Messages.GAME_WINNER, getColorANSI(winner.color()), winner.name(), pointsWon));
         display(Messages.ENTER_TO_CONTINUE);
         getInput();
     }
 
+    /**
+     * Retrieves both player names from the user.
+     *
+     * @return a map containing the names of the players, keyed by their colors
+     */
     public Map<Color, String> retrievePlayerNames() {
         Map<Color, String> playerNames = new HashMap<>();
         playerNames.put(Color.BLUE, retrievePlayerName(String.format(Messages.NAME_PROMPT, 1)));
@@ -107,6 +163,11 @@ public class View {
         return playerNames;
     }
 
+    /**
+     * Retrieves a player names from the user.
+     *
+     * @return a map containing the names of the players, keyed by their colors
+     */
     private String retrievePlayerName(String prompt) {
         display(prompt);
 
@@ -122,6 +183,11 @@ public class View {
         }
     }
 
+    /**
+     * Retrieves the win threshold for the match from the user.
+     *
+     * @return the win threshold
+     */
     public int retrieveWinThreshold() {
         display(Messages.POINTS_TO_PLAY_TO_PROMPT);
 
@@ -140,22 +206,44 @@ public class View {
         }
     }
 
+    /**
+     * Displays the result of a player's initial roll in the game.
+     *
+     * @param player the player who rolled
+     * @param roll   the result of the player's roll
+     */
     public void displayInitialRoll(Player player, int roll) {
         String name = player.name();
         String colorCode = getColorANSI(player.color());
         display(String.format(Messages.INITIAL_ROLL_MESSAGE, colorCode, name, roll));
     }
 
+    /**
+     * Displays a message indicating that both players rolled the same number
+     * and need to roll again.
+     */
     public void displayRollAgain() {
         display(Messages.ROLL_AGAIN);
     }
 
+    /**
+     * Displays a message indicating which player rolled the higher number
+     * and will play first.
+     *
+     * @param firstToPlay the player who will play first
+     */
     public void displayWhoPlaysFirst(Player firstToPlay) {
         String name = firstToPlay.name();
         String colorCode = getColorANSI(firstToPlay.color());
         display(String.format(Messages.FIRST_TO_PLAY, colorCode, name));
     }
 
+    /**
+     * Retrieves the ANSI color code for the specified player color.
+     *
+     * @param color the color of the player
+     * @return the ANSI color code as a string
+     */
     private String getColorANSI(Color color) {
         return switch(color) {
             case BLUE -> ColorANSICodes.BLUE;
@@ -163,9 +251,17 @@ public class View {
         };
     }
 
+    /**
+     * Prompts the specified player to enter a command and parses it into a {@code PlayerInput} object.
+     * Repeats the prompt until a valid input is provided.
+     *
+     * @param player the player entering the command
+     * @return a {@code PlayerInput} object representing the player's command
+     */
     public PlayerInput getPlayerInput(Player player) {
         String name = player.name();
         String colorCode = getColorANSI(player.color());
+
         PlayerInput playerInput;
         do {
             display(String.format(Messages.PLAYER_INPUT_PROMPT, colorCode, name));
@@ -177,6 +273,12 @@ public class View {
         return playerInput;
     }
 
+    /**
+     * Removes all whitespace characters from the input string.
+     *
+     * @param input the raw input string
+     * @return the cleaned input string with all whitespace removed
+     */
     private String cleanInput(String input) {
         return input.replaceAll("\\s", "");
     }
@@ -190,7 +292,20 @@ public class View {
         return playerInput;
     }
 
-    // Updated displayBoard method to accept match score and match length
+    /**
+     * Displays the backgammon board along with additional match information.
+     *
+     * @param board         the current game board
+     * @param rollToPlay    the dice rolls available
+     * @param playerToPlay  the player currently taking their turn
+     * @param pip           the pip count for the current player
+     * @param player1       the first player
+     * @param player1Score  the first player's score
+     * @param player2       the second player
+     * @param player2Score  the second player's score
+     * @param matchLength   the match length
+     * @param doubleDice    the doubling die
+     */
     public void displayBoard(Board board, List<Integer> rollToPlay, Player playerToPlay, Integer pip,
                              Player player1, int player1Score, Player player2, int player2Score, int matchLength, DoubleDice doubleDice) {
 
@@ -214,17 +329,40 @@ public class View {
         }
     }
 
+    /**
+     * Displays match information, including the match length and the current scores of both players.
+     *
+     * @param player1       the first player
+     * @param player1Score  the score of the first player
+     * @param player2       the second player
+     * @param player2Score  the score of the second player
+     * @param matchLength   the total match length (points required to win the match)
+     */
     private void displayMatchInfo(Player player1, int player1Score, Player player2, int player2Score, int matchLength) {
         display(String.format(Messages.PLAYING_TO, matchLength));
         display(String.format(Messages.MATCH_SCORE, getColorANSI(player1.color()), player1.name(), player1Score,
                 getColorANSI(player2.color()), player2.name(), player2Score));
     }
 
+    /**
+     * Displays the pip counts for both players.
+     * The pip count represents the total number of moves needed to bear off all checkers for each player.
+     *
+     * @param redPipCount  the pip count for the red player
+     * @param bluePipCount the pip count for the blue player
+     */
     public void displayPipCount(int redPipCount, int bluePipCount) {
         display("Red Pip Count: " + redPipCount);
         display("Blue Pip Count: " + bluePipCount + "\n");
     }
 
+    /**
+     * Prompts the specified player to make a decision on a double offer.
+     * The player can either "accept" or "refuse" the offer.
+     *
+     * @param player the player who needs to make the double decision
+     * @return {@code true} if the player accepts the double, {@code false} if the player refuses
+     */
     public boolean getDoubleDecision(Player player) {
         String name = player.name();
         String colorCode = getColorANSI(player.color());
@@ -239,10 +377,22 @@ public class View {
         }
     }
 
+    /**
+     * Displays a message indicating that the current player cannot offer a double
+     * because the doubling die is owned by another player.
+     *
+     * @param owner the player who currently owns the doubling die
+     */
     public void cannotOfferDouble(Player owner) {
         display(String.format(Messages.DOUBLE_DICE_OWNER, getColorANSI(owner.color()), owner.name()));
     }
 
+    /**
+     * Displays a hint message listing the available commands for the player.
+     * If the doubling option is available, the hint includes the "double" command.
+     *
+     * @param doubleAvailable {@code true} if the "double" command is available, {@code false} otherwise
+     */
     public void displayHint(boolean doubleAvailable) {
         if (doubleAvailable) {
             display(Messages.HINT_WITH_DOUBLE);
@@ -251,6 +401,12 @@ public class View {
         display(Messages.HINT);
     }
 
+    /**
+     * Displays a list of possible move sequences for the current player.
+     * Each sequence is displayed as a numbered option, with its moves listed.
+     *
+     * @param possibleMoveSequences a list of possible move sequences, where each sequence is a list of {@code Move} objects
+     */
     public void displayPossibleMoves(List<List<Move>> possibleMoveSequences) {
         display(Messages.POSSIBLE_MOVES_TITLE);
         for (int i = 0; i < possibleMoveSequences.size(); i++) {
@@ -262,12 +418,23 @@ public class View {
         }
     }
 
+    /**
+     * Displays a message indicating that the specified player has no available moves.
+     *
+     * @param player the player who has no available moves
+     */
     public void displayNoMovesAvailable(Player player) {
         String name = player.name();
         String colorCode = getColorANSI(player.color());
         display(String.format(Messages.NO_POSSIBLE_MOVES, colorCode, name));
     }
 
+    /**
+     * Displays a message indicating that only one move sequence is possible
+     * and lists the moves in that sequence.
+     *
+     * @param moves the list of moves in the only possible move sequence
+     */
     public void displayOnlyOnePossibleMove(List<Move> moves) {
         display(Messages.ONLY_POSSIBLE_MOVE);
         for (Move move : moves) {
@@ -275,6 +442,13 @@ public class View {
         }
     }
 
+    /**
+     * Prompts the user to select a move sequence from the available options.
+     * Validates the input to ensure it is within the range of available options.
+     *
+     * @param numberOfOptions the number of available move options
+     * @return the index of the selected move sequence (zero-based)
+     */
     public int promptMoveSelection(int numberOfOptions) {
         display(String.format(Messages.CHOSE_MOVE_PROMPT, numberOfOptions));
 
@@ -292,6 +466,11 @@ public class View {
         }
     }
 
+    /**
+     * Prompts the user to start a new match and validates the input.
+     *
+     * @return {@code true} if the user wants to start a new match, {@code false} otherwise
+     */
     public boolean promptStartNewMatch() {
         display("Would you like to start a new match? (yes/no)");
         while (true) {

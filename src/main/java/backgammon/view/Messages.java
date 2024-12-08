@@ -6,6 +6,11 @@
 
 package backgammon.view;
 
+/**
+ * Utility class containing predefined messages for the Backgammon game.
+ * These messages include prompts, notifications, and error messages used throughout the game.
+ * This class centralizes all text content for easy maintenance and localization.
+ */
 class Messages {
     static final String WELCOME_MESSAGE = "Welcome to Backgammon";
 

@@ -6,4 +6,8 @@
 
 package backgammon.board;
 
+/**
+ * Represents the colors of checkers in a backgammon game.
+ * The colors indicate the two opposing players.
+ */
 public enum Color {BLUE, RED}

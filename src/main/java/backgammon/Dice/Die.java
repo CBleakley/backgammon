@@ -6,9 +6,16 @@
 
 package backgammon.Dice;
 
+/**
+ * Represents a single die used in a game.
+ * The die can be rolled to produce a random face value between 1 and 6.
+ */
 public class Die {
     private Integer faceValue;
 
+    /**
+     * Initializes a new Die with no face value set.
+     */
     public Die() {
         this.faceValue = null;
     }
@@ -18,6 +25,11 @@ public class Die {
         return faceValue;
     }
 
+    /**
+     * Rolls the die to generate a random face value between 1 and 6.
+     *
+     * @return the new face value after the roll
+     */
     public int roll() {
         faceValue = (int)(Math.random() * 6) + 1;
         return faceValue;

@@ -6,6 +6,11 @@
 
 package backgammon.view;
 
+/**
+ * Utility class that contains formatting strings and constants for displaying the backgammon board.
+ * This class provides predefined ANSI codes, symbols, and templates for rendering the board, checkers,
+ * and dice rolls in a user-friendly way.
+ */
 public class BoardFormatting {
     public static final String DOUBLE_DICE = "  [%s]";
     public static final String NO_PIP_BOARDER = "|--+--+---+---+---+---+-|BAR|--+--+---+---+---+---+-|  OFF: %s";
