@@ -25,4 +25,6 @@ public class BoardFormatting {
     public static final String BLUE_CHECKER = ColorANSICodes.BLUE + CHECKER_SYMBOL + ColorANSICodes.RESET;
     public static final String RED_NUMBER = ColorANSICodes.RED + "%s" + ColorANSICodes.RESET;
     public static final String BLUE_NUMBER = ColorANSICodes.BLUE + "%s" + ColorANSICodes.RESET;
+
+    BoardFormatting() { }
 }

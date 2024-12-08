@@ -1,5 +1,6 @@
-package backgammon.main;
+package mainTests;
 
+import backgammon.main.App;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,7 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AppTest {
+class AppTests {
     private final InputStream originalIn = System.in;
     private final PrintStream originalOut = System.out;
 

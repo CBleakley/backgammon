@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class BoardFormattingTests {
 
     @Test
+    void boardFormatting() { new BoardFormatting(); }
+
+    @Test
     void should_HaveCorrectDoubleDiceFormat() {
         String expected = "  [%s]";
         assertEquals(expected, BoardFormatting.DOUBLE_DICE, "DOUBLE_DICE format should match");
