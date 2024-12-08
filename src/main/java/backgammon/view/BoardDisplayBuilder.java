@@ -34,7 +34,7 @@ public class BoardDisplayBuilder {
         }
 
         if (doubleDiceOwner != null && doubleDice.getOwner().color() == Color.RED) {
-            displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier() * 2));
+            displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier()));
         }
 
         displayBoard.append("\n");
@@ -82,7 +82,7 @@ public class BoardDisplayBuilder {
         }
 
         if (doubleDiceOwner == null) {
-            displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier() * 2));
+            displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier()));
         }
 
         displayBoard.append("\n");
@@ -130,7 +130,7 @@ public class BoardDisplayBuilder {
         }
 
         if (doubleDiceOwner != null && doubleDiceOwner.color() == Color.BLUE) {
-            displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier() * 2));
+            displayBoard.append(String.format(BoardFormatting.DOUBLE_DICE, doubleDice.getMultiplier()));
         }
 
         displayBoard.append("\n");
