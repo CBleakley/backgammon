@@ -13,5 +13,5 @@ java -version
 Run the following from the project root.
 
 ```bash
-java -jar ./executables/BackgammonApp.jar
+java -jar ./executable/BackgammonApp.jar
 ```
